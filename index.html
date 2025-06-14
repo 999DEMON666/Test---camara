@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Sector (Modo Diagnóstico)</title>
+    <title>Buscador de Sector por QR y Manual</title>
     
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
@@ -33,37 +33,6 @@
             border: 1px solid #222;
         }
 
-        /* --- Estilos para el cuadro de diagnóstico --- */
-        #camera-debug-info {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px dashed #00ff18;
-            border-radius: 8px;
-            text-align: left;
-            font-size: 0.9em;
-            word-wrap: break-word;
-            background-color: #222;
-        }
-        #camera-debug-info h3 {
-            margin-top: 0;
-            color: #00ff18;
-            text-align: center;
-        }
-        #camera-debug-info ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        #camera-debug-info li {
-            margin-bottom: 10px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 10px;
-        }
-        #camera-debug-info li:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
         #qr-reader {
             width: 100%;
             max-width: 300px; 
@@ -73,7 +42,70 @@
             overflow: hidden;
             position: relative;
         }
+
+        #torch-button {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            z-index: 10;
+        }
         
+        #torch-button.torch-on {
+            background-color: #00ff18;
+            color: black;
+            box-shadow: 0 0 15px #00ff18;
+        }
+
+        .manual-search {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+        
+        #manualCodeInput {
+            width: 70%;
+            padding: 12px;
+            font-size: 1.5em;
+            text-align: center;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background-color: #333;
+            color: #fff;
+            -moz-appearance: textfield;
+        }
+        #manualCodeInput::-webkit-outer-spin-button,
+        #manualCodeInput::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .manual-search button {
+            background-color: #00ff18;
+            color: black;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 15px;
+        }
+        
+        .manual-search button:active {
+            transform: scale(0.95);
+        }
+
         h1 {
             color: #00ff18;
             font-size: 1.8em;
@@ -85,6 +117,29 @@
             font-size: 1em;
             margin-top: 0;
         }
+        
+        #mensajes {
+            margin-top: 15px; 
+            font-size: 1em; 
+            color: #f0f0f0; 
+            min-height: 20px; 
+            font-weight: bold;
+        }
+
+        #resultado { 
+            margin-top: 10px; 
+            font-size: 1.7em; 
+            color: #00ff18; 
+            min-height: 50px;
+            font-weight: bold;
+            word-wrap: break-word;
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: #00ff18;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -94,66 +149,203 @@
         <p>Apunta la cámara al código QR.</p>
         <div id="qr-reader"></div>
 
-        <div id="camera-debug-info">
-            <h3>Buscando cámaras...</h3>
+        <div class="manual-search">
+            <p>O ingresa el código manualmente:</p>
+            <input type="text" id="manualCodeInput" placeholder="Código o Nombre">
+            <button onclick="buscarManualmente()">Buscar</button>
         </div>
+
+        <div id="mensajes"></div>
+        <h2 id="resultado"></h2>
     </div>
 
+    <footer>
+        <p>Propiedad de ®Gonzalez Agustin</p>
+    </footer>
+
     <script>
+    // TU BASE DE DATOS: Edita esta sección con tus datos reales.
+    const lugaresConCodigos = {
+        "Parrilla": ["701", "702", "703"],
+        "Sector A-1": ["101", "102"],
+        "Sector B-3": ["205", "206", "207", "208"],
+        "Bodega": ["950", "951"],
+        "Gonzalez Agustin": ["12345"],
+        "Villa Devoto": ["1417"],
+        "MARIANO ACOSTA": ["1772"]
+    };
     
-    document.addEventListener('DOMContentLoaded', () => {
-        const debugInfoElement = document.getElementById('camera-debug-info');
-        const qrReaderElement = document.getElementById('qr-reader');
-        
-        if (typeof Html5Qrcode === "undefined") {
-            debugInfoElement.innerHTML = '<h3>Error</h3><p>No se pudo cargar la biblioteca del escáner.</p>';
+    function buscarManualmente() {
+        const manualInput = document.getElementById('manualCodeInput');
+        const codigo = manualInput.value.trim();
+        realizarBusquedaYMostrarResultado(codigo);
+        manualInput.value = '';
+    }
+    
+    function realizarBusquedaYMostrarResultado(codigo) {
+        const elementoResultado = document.getElementById('resultado');
+        const elementoMensajes = document.getElementById('mensajes');
+        elementoResultado.innerHTML = '';
+        elementoMensajes.innerHTML = '';
+
+        if (!codigo || codigo.includes('{')) {
+            elementoMensajes.innerText = 'Por favor, ingresa o escanea un código válido.';
             return;
         }
 
-        // --- LÓGICA DE DIAGNÓSTICO ---
-        Html5Qrcode.getCameras().then(cameras => {
-            debugInfoElement.innerHTML = '<h3>Cámaras Detectadas:</h3>';
+        if (isNaN(codigo)) {
+            const sectorEncontrado = Object.keys(lugaresConCodigos).find(sector => sector.toLowerCase() === codigo.toLowerCase());
+            if (sectorEncontrado) {
+                 elementoMensajes.innerText = `Sector encontrado:`;
+                 elementoResultado.innerHTML = `<b>${sectorEncontrado}</b><br><small>Códigos: ${lugaresConCodigos[sectorEncontrado].join(', ')}</small>`;
+            } else {
+                 elementoMensajes.innerText = `El sector "${codigo}" no fue encontrado.`;
+            }
+            return;
+        }
 
+        let lugarEncontrado = null;
+        for (const lugar in lugaresConCodigos) {
+            if (lugaresConCodigos[lugar].includes(codigo)) {
+                lugarEncontrado = lugar;
+                break;
+            }
+        }
+
+        if (lugarEncontrado) {
+            elementoMensajes.innerText = `Código ${codigo} encontrado:`;
+            elementoResultado.innerHTML = ` <b>${lugarEncontrado}</b>`;
+        } else {
+            elementoMensajes.innerText = `El código ${codigo} no fue encontrado.`;
+        }
+    }
+
+    function obtenerCodigoDesdeQR(textoQR) {
+        if (!textoQR) return null;
+        try {
+            const datosQR = JSON.parse(textoQR);
+            if (datosQR && typeof datosQR.carrier_data === 'string') {
+                const partes = datosQR.carrier_data.split('|');
+                if (partes.length > 2 && partes[2]) {
+                    return partes[2].trim();
+                }
+            }
+        } catch (error) {}
+        if (textoQR.includes('|')) {
+            const partes = textoQR.split('|').filter(p => p);
+            if (partes.length > 0) {
+                return partes[partes.length - 1].trim();
+            }
+        }
+        return textoQR.trim();
+    }
+    
+    let html5QrCode;
+    let torchOn = false;
+    let audioContext;
+
+    function playBeep() {
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(750, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.15);
+        } catch (e) {
+            console.error("No se pudo reproducir el sonido.", e);
+        }
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        playBeep(); 
+        const codigoPostal = obtenerCodigoDesdeQR(decodedText);
+        document.getElementById('manualCodeInput').value = codigoPostal; 
+        realizarBusquedaYMostrarResultado(codigoPostal);
+    }
+
+    function onScanFailure(error) {}
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const mensajesElement = document.getElementById('mensajes');
+        html5QrCode = new Html5Qrcode("qr-reader");
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        Html5Qrcode.getCameras().then(cameras => {
             if (!cameras || cameras.length === 0) {
-                debugInfoElement.innerHTML += '<p>No se encontraron cámaras en este dispositivo.</p>';
+                mensajesElement.innerText = "No se encontró ninguna cámara en este dispositivo.";
                 return;
             }
 
-            // Construye una lista visible en HTML
-            let cameraListHTML = '<ul>';
-            cameras.forEach((camera, index) => {
-                cameraListHTML += `<li>
-                    <b>Cámara ${index + 1}:</b><br>
-                    <b>Etiqueta:</b> ${camera.label}<br>
-                    <b>ID:</b> ${camera.id}
-                </li>`;
-            });
-            cameraListHTML += '</ul>';
-            debugInfoElement.innerHTML += cameraListHTML;
+            const rearCameras = cameras.filter(camera => 
+                camera.label.toLowerCase().includes('facing back')
+            );
 
-            // Intenta iniciar la cámara con la lógica anterior para que el visor aparezca
-            // aunque sea con la cámara incorrecta.
-            try {
-                const html5QrCode = new Html5Qrcode("qr-reader");
-                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-                const rearCameras = cameras.filter(c => c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('trasera'));
-                const cameraIdToUse = (rearCameras.length > 0) ? rearCameras[0].id : cameras[0].id;
-                
-                html5QrCode.start(cameraIdToUse, config, (text, result) => { 
-                    // No hacemos nada con el escaneo en modo diagnóstico
-                 }).catch(err => {
-                    qrReaderElement.innerHTML = "Error al iniciar el visor de la cámara.";
-                 });
-            } catch (e) {
-                qrReaderElement.innerHTML = "Error general al intentar iniciar la cámara.";
+            if (rearCameras.length === 0) {
+                mensajesElement.innerText = "No se encontró una cámara trasera.";
+                return;
             }
 
+            let selectedCameraId;
+
+            if (rearCameras.length > 1) {
+                // Buscamos la cámara que termine en "0, facing back", que suele ser la principal.
+                const mainCamera = rearCameras.find(camera => 
+                    camera.label.toLowerCase().endsWith('0, facing back')
+                );
+                selectedCameraId = mainCamera ? mainCamera.id : rearCameras[0].id;
+            } else {
+                selectedCameraId = rearCameras[0].id;
+            }
+
+            html5QrCode.start(
+                selectedCameraId, 
+                config, 
+                onScanSuccess, 
+                onScanFailure
+            ).then(() => {
+                setTimeout(verificarSoporteLinterna, 500);
+            }).catch(err => {
+                console.error("Error al iniciar la cámara: ", err);
+                mensajesElement.innerText = "No se pudo iniciar la cámara. Revisa los permisos.";
+            });
 
         }).catch(err => {
-            debugInfoElement.innerHTML = `<h3>Error al obtener cámaras:</h3><p>${err}</p>`;
             console.error("Error al obtener las cámaras: ", err);
+            mensajesElement.innerText = "No se pudo acceder a las cámaras. Otorga los permisos necesarios.";
         });
     });
+
+    function verificarSoporteLinterna() {
+        try {
+            const track = html5QrCode.getRunningTrackCapabilities();
+            const soportaLinterna = !!track.torch;
+
+            if (soportaLinterna) {
+                const qrReaderElement = document.getElementById('qr-reader');
+                const torchButton = document.createElement('button');
+                torchButton.id = 'torch-button';
+                torchButton.innerHTML = '🔦 Linterna';
+                qrReaderElement.appendChild(torchButton);
+
+                torchButton.addEventListener('click', () => {
+                    torchOn = !torchOn;
+                    html5QrCode.applyVideoConstraints({
+                        advanced: [{ torch: torchOn }]
+                    });
+                    torchButton.classList.toggle('torch-on', torchOn);
+                });
+            }
+        } catch (e) {
+            console.error("Error al verificar soporte de linterna: ", e)
+        }
+    }
     </script>
 </body>
 </html>
