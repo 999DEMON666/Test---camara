@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Sector (Modo Diagnóstico)</title>
+    
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; 
+            background-color: #0f0f0f; 
+            color: #e0e0e0;
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px 15px; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container { 
+            background-color: #191919; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 5px 25px rgba(0, 255, 24, 0.1); 
+            text-align: center; 
+            width: 100%; 
+            max-width: 420px; 
+            border: 1px solid #222;
+        }
+
+        /* --- Estilos para el cuadro de diagnóstico --- */
+        #camera-debug-info {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed #00ff18;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.9em;
+            word-wrap: break-word;
+            background-color: #222;
+        }
+        #camera-debug-info h3 {
+            margin-top: 0;
+            color: #00ff18;
+            text-align: center;
+        }
+        #camera-debug-info ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        #camera-debug-info li {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+        #camera-debug-info li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        #qr-reader {
+            width: 100%;
+            max-width: 300px; 
+            margin: 0 auto;
+            border: 2px solid #333; 
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        h1 {
+            color: #00ff18;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #ccc;
+            font-size: 1em;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Buscador de Sector</h1>
+        
+        <p>Apunta la cámara al código QR.</p>
+        <div id="qr-reader"></div>
+
+        <div id="camera-debug-info">
+            <h3>Buscando cámaras...</h3>
+        </div>
+    </div>
+
+    <script>
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const debugInfoElement = document.getElementById('camera-debug-info');
+        const qrReaderElement = document.getElementById('qr-reader');
+        
+        if (typeof Html5Qrcode === "undefined") {
+            debugInfoElement.innerHTML = '<h3>Error</h3><p>No se pudo cargar la biblioteca del escáner.</p>';
+            return;
+        }
+
+        // --- LÓGICA DE DIAGNÓSTICO ---
+        Html5Qrcode.getCameras().then(cameras => {
+            debugInfoElement.innerHTML = '<h3>Cámaras Detectadas:</h3>';
+
+            if (!cameras || cameras.length === 0) {
+                debugInfoElement.innerHTML += '<p>No se encontraron cámaras en este dispositivo.</p>';
+                return;
+            }
+
+            // Construye una lista visible en HTML
+            let cameraListHTML = '<ul>';
+            cameras.forEach((camera, index) => {
+                cameraListHTML += `<li>
+                    <b>Cámara ${index + 1}:</b><br>
+                    <b>Etiqueta:</b> ${camera.label}<br>
+                    <b>ID:</b> ${camera.id}
+                </li>`;
+            });
+            cameraListHTML += '</ul>';
+            debugInfoElement.innerHTML += cameraListHTML;
+
+            // Intenta iniciar la cámara con la lógica anterior para que el visor aparezca
+            // aunque sea con la cámara incorrecta.
+            try {
+                const html5QrCode = new Html5Qrcode("qr-reader");
+                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+                const rearCameras = cameras.filter(c => c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('trasera'));
+                const cameraIdToUse = (rearCameras.length > 0) ? rearCameras[0].id : cameras[0].id;
+                
+                html5QrCode.start(cameraIdToUse, config, (text, result) => { 
+                    // No hacemos nada con el escaneo en modo diagnóstico
+                 }).catch(err => {
+                    qrReaderElement.innerHTML = "Error al iniciar el visor de la cámara.";
+                 });
+            } catch (e) {
+                qrReaderElement.innerHTML = "Error general al intentar iniciar la cámara.";
+            }
+
+
+        }).catch(err => {
+            debugInfoElement.innerHTML = `<h3>Error al obtener cámaras:</h3><p>${err}</p>`;
+            console.error("Error al obtener las cámaras: ", err);
+        });
+    });
+    </script>
+</body>
+</html>
