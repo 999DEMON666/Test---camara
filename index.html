@@ -66,6 +66,31 @@
             box-shadow: 0 0 15px #00ff18;
         }
 
+        /* --- NUEVOS ESTILOS PARA EL ZOOM --- */
+        #zoom-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .zoom-button {
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .zoom-button.active {
+            background-color: #00ff18;
+            color: black;
+            border-color: #00ff18;
+        }
+        /* --- FIN ESTILOS ZOOM --- */
+
+
         .manual-search {
             margin-top: 30px;
             padding-top: 20px;
@@ -81,12 +106,6 @@
             border-radius: 8px;
             background-color: #333;
             color: #fff;
-            -moz-appearance: textfield;
-        }
-        #manualCodeInput::-webkit-outer-spin-button,
-        #manualCodeInput::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
         }
 
         .manual-search button {
@@ -98,48 +117,19 @@
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.2s;
             margin-top: 15px;
         }
         
-        .manual-search button:active {
-            transform: scale(0.95);
-        }
-
         h1 {
             color: #00ff18;
             font-size: 1.8em;
             margin-bottom: 10px;
         }
 
-        p {
-            color: #ccc;
-            font-size: 1em;
-            margin-top: 0;
-        }
-        
-        #mensajes {
-            margin-top: 15px; 
-            font-size: 1em; 
-            color: #f0f0f0; 
-            min-height: 20px; 
-            font-weight: bold;
-        }
-
-        #resultado { 
-            margin-top: 10px; 
-            font-size: 1.7em; 
-            color: #00ff18; 
-            min-height: 50px;
-            font-weight: bold;
-            word-wrap: break-word;
-        }
-        
-        footer {
-            margin-top: 30px;
-            color: #00ff18;
-            font-size: 0.9em;
-        }
+        p { color: #ccc; }
+        #mensajes { min-height: 20px; font-weight: bold; }
+        #resultado { min-height: 50px; font-weight: bold; color: #00ff18; font-size: 1.7em; }
+        footer { margin-top: 30px; color: #00ff18; font-size: 0.9em; }
     </style>
 </head>
 <body>
@@ -148,6 +138,12 @@
         
         <p>Apunta la cámara al código QR.</p>
         <div id="qr-reader"></div>
+
+        <div id="zoom-controls" style="display: none;">
+            <button id="zoom-1x" class="zoom-button active">1x</button>
+            <button id="zoom-1.5x" class="zoom-button">1.5x</button>
+            <button id="zoom-2x" class="zoom-button">2x</button>
+        </div>
 
         <div class="manual-search">
             <p>O ingresa el código manualmente:</p>
@@ -164,7 +160,6 @@
     </footer>
 
     <script>
-    // TU BASE DE DATOS: Edita esta sección con tus datos reales.
     const lugaresConCodigos = {
         "Parrilla": ["701", "702", "703"],
         "Sector A-1": ["101", "102"],
@@ -255,12 +250,9 @@
             gainNode.connect(audioContext.destination);
             oscillator.type = 'sine';
             oscillator.frequency.setValueAtTime(750, audioContext.currentTime);
-            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-            oscillator.start(audioContext.currentTime);
+            oscillator.start();
             oscillator.stop(audioContext.currentTime + 0.15);
-        } catch (e) {
-            console.error("No se pudo reproducir el sonido.", e);
-        }
+        } catch (e) {}
     }
 
     function onScanSuccess(decodedText, decodedResult) {
@@ -282,68 +274,69 @@
                 mensajesElement.innerText = "No se encontró ninguna cámara en este dispositivo.";
                 return;
             }
-
-            const rearCameras = cameras.filter(camera => 
-                camera.label.toLowerCase().includes('facing back')
-            );
-
+            const rearCameras = cameras.filter(c => c.label.toLowerCase().includes('facing back'));
             if (rearCameras.length === 0) {
                 mensajesElement.innerText = "No se encontró una cámara trasera.";
                 return;
             }
-
             let selectedCameraId;
-
             if (rearCameras.length > 1) {
-                // Buscamos la cámara que termine en "0, facing back", que suele ser la principal.
-                const mainCamera = rearCameras.find(camera => 
-                    camera.label.toLowerCase().endsWith('0, facing back')
-                );
+                const mainCamera = rearCameras.find(c => c.label.toLowerCase().endsWith('0, facing back'));
                 selectedCameraId = mainCamera ? mainCamera.id : rearCameras[0].id;
             } else {
                 selectedCameraId = rearCameras[0].id;
             }
 
-            html5QrCode.start(
-                selectedCameraId, 
-                config, 
-                onScanSuccess, 
-                onScanFailure
-            ).then(() => {
-                setTimeout(verificarSoporteLinterna, 500);
+            html5QrCode.start(selectedCameraId, config, onScanSuccess, onScanFailure)
+            .then(() => {
+                // Renombramos la función para que sea más clara
+                setupAdvancedControls();
             }).catch(err => {
-                console.error("Error al iniciar la cámara: ", err);
                 mensajesElement.innerText = "No se pudo iniciar la cámara. Revisa los permisos.";
             });
-
         }).catch(err => {
-            console.error("Error al obtener las cámaras: ", err);
             mensajesElement.innerText = "No se pudo acceder a las cámaras. Otorga los permisos necesarios.";
         });
     });
 
-    function verificarSoporteLinterna() {
+    // --- FUNCIÓN MEJORADA PARA CONTROLES DE LINTERNA Y ZOOM ---
+    function setupAdvancedControls() {
         try {
-            const track = html5QrCode.getRunningTrackCapabilities();
-            const soportaLinterna = !!track.torch;
+            const capabilities = html5QrCode.getRunningTrackCapabilities();
+            const qrReaderElement = document.getElementById('qr-reader');
 
-            if (soportaLinterna) {
-                const qrReaderElement = document.getElementById('qr-reader');
+            // 1. Control de Linterna (como antes)
+            if (capabilities.torch) {
                 const torchButton = document.createElement('button');
                 torchButton.id = 'torch-button';
                 torchButton.innerHTML = '🔦 Linterna';
                 qrReaderElement.appendChild(torchButton);
-
                 torchButton.addEventListener('click', () => {
                     torchOn = !torchOn;
-                    html5QrCode.applyVideoConstraints({
-                        advanced: [{ torch: torchOn }]
-                    });
+                    html5QrCode.applyVideoConstraints({ advanced: [{ torch: torchOn }] });
                     torchButton.classList.toggle('torch-on', torchOn);
                 });
             }
+
+            // 2. NUEVO: Control de Zoom
+            if (capabilities.zoom) {
+                const zoomControls = document.getElementById('zoom-controls');
+                zoomControls.style.display = 'flex'; // Muestra los botones de zoom
+
+                const zoomLevels = [1, 1.5, 2];
+                zoomLevels.forEach(level => {
+                    const zoomButton = document.getElementById(`zoom-${level}x`);
+                    zoomButton.addEventListener('click', () => {
+                        // Aplica el zoom
+                        html5QrCode.applyVideoConstraints({ advanced: [{ zoom: level }] });
+                        // Actualiza el estilo del botón activo
+                        document.querySelectorAll('.zoom-button').forEach(btn => btn.classList.remove('active'));
+                        zoomButton.classList.add('active');
+                    });
+                });
+            }
         } catch (e) {
-            console.error("Error al verificar soporte de linterna: ", e)
+            console.error("Error al configurar controles avanzados: ", e);
         }
     }
     </script>
