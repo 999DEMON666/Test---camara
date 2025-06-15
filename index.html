@@ -33,161 +33,93 @@
             border: 1px solid #222;
         }
 
-        /* --- NUEVOS ESTILOS PARA EL MENÚ DE TARJETAS --- */
-        #menu-view .menu-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .menu-card {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            background-color: #2a2a2a;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #444;
-            text-decoration: none;
-            color: inherit;
-            text-align: left;
-            transition: border-color 0.2s, background-color 0.2s;
-        }
-        .menu-card:active {
-            background-color: #333;
-            border-color: #00ff18;
-        }
-        .card-icon {
-            font-size: 2.5em;
-        }
-        .card-content .card-title {
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #00ff18;
-            margin: 0;
-        }
-        .card-content .card-description {
-            font-size: 0.9em;
-            color: #ccc;
-            margin: 5px 0 0 0;
-        }
+        /* --- ESTILOS MENÚ PRINCIPAL --- */
+        #menu-view .menu-grid { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .menu-card { display: flex; align-items: center; gap: 20px; background-color: #2a2a2a; padding: 20px; border-radius: 12px; border: 1px solid #444; text-decoration: none; color: inherit; text-align: left; transition: border-color 0.2s, background-color 0.2s; }
+        .menu-card:active { background-color: #333; border-color: #00ff18; }
+        .card-icon { font-size: 2.5em; }
+        .card-content .card-title { font-size: 1.4em; font-weight: bold; color: #00ff18; margin: 0; }
+        .card-content .card-description { font-size: 0.9em; color: #ccc; margin: 5px 0 0 0; }
 
         /* --- ESTILOS PARA EL BUSCADOR --- */
-        .header-scanner {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .back-button {
-            background: none;
+        .header-scanner { display: flex; justify-content: flex-start; align-items: center; margin-bottom: 15px; }
+        .back-button { background: none; border: none; color: #ccc; font-size: 1.2em; cursor: pointer; padding: 5px 10px; }
+        .header-scanner h1 { flex-grow: 1; margin: 0; padding-right: 30px;  }
+
+        /* --- NUEVO --- Estilos para el botón de prender/apagar cámara */
+        .camera-toggle-button {
+            width: 95%;
+            padding: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
             border: none;
-            color: #ccc;
-            font-size: 1.2em;
+            border-radius: 8px;
             cursor: pointer;
-            padding: 5px 10px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
         }
-        .header-scanner h1 {
-            flex-grow: 1;
-            margin: 0;
-            padding-right: 30px; 
+        .camera-toggle-button.on {
+            background-color: #f44336; /* Rojo para "Apagar" */
+            color: white;
+        }
+        .camera-toggle-button.off {
+            background-color: #4CAF50; /* Verde para "Prender" */
+            color: white;
         }
 
         #qr-reader {
             width: 100%;
             max-width: 300px; 
-            margin: 0 auto;
+            margin: 0 auto 15px auto;
             border: 2px solid #333; 
             border-radius: 8px;
             overflow: hidden;
             position: relative;
+            background-color: #000;
         }
-
-        #torch-button {
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 10px 20px;
-            border-radius: 20px;
-            z-index: 10;
-        }
-        
-        #torch-button.torch-on {
-            background-color: #00ff18;
-            color: black;
-        }
-
-        #zoom-controls {
+        #qr-reader-placeholder {
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .zoom-button {
-            background-color: #333;
-            color: white;
-            border: 1px solid #555;
-            border-radius: 8px;
-            padding: 8px 16px;
-        }
-        .zoom-button.active {
-            background-color: #00ff18;
-            color: black;
+            color: #555;
+            font-size: 1.5em;
+            height: 100%;
         }
 
-        .manual-search {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #333;
+        #torch-button { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid rgba(255, 255, 255, 0.5); padding: 10px 20px; border-radius: 20px; z-index: 10; }
+        #torch-button.torch-on { background-color: #00ff18; color: black; }
+        #zoom-controls { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
+        .zoom-button { background-color: #333; color: white; border: 1px solid #555; border-radius: 8px; padding: 8px 16px; }
+        .zoom-button.active { background-color: #00ff18; color: black; }
+
+        .manual-search { margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; }
+        
+        #manualCodeInput {
+            width: 85%; padding: 18px; font-size: 2em; text-align: center;
+            border: 2px solid #444; border-radius: 8px; background-color: #333; color: #fff;
+        }
+
+        .manual-search button, .upload-button {
+            background-color: #00ff18; color: black; border: none; padding: 18px 30px;
+            font-size: 1.6em; font-weight: bold; border-radius: 8px; cursor: pointer;
+            margin-top: 15px; width: 85%; box-sizing: border-box;
         }
         
-        /* VERSIÓN MODIFICADA Y MÁS GRANDE */
-#manualCodeInput {
-    width: 85%; /* Ocupa más ancho de la tarjeta */
-    padding: 18px;   /* Más espacio interior, lo hace más alto */
-    font-size: 2em; /* Letra considerablemente más grande */
-    text-align: center;
-    border: 2px solid #444;
-    border-radius: 8px;
-    background-color: #333;
-    color: #fff;
-}
-
- /* VERSIÓN MODIFICADA Y MÁS GRANDE */
-.manual-search button {
-    background-color: #00ff18;
-    color: black;
-    border: none;
-    padding: 18px 30px; /* Más relleno para hacerlo más grande */
-    font-size: 1.6em;  /* Letra del botón más grande */
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 15px; /* Mantenemos el margen */
-    width: 85%;       /* Hacemos que ocupe el mismo ancho que el buscador */
-}
+        /* --- NUEVO --- Estilo específico para el botón de subir foto */
+        .upload-button {
+            background-color: #00ff42;
+            color: #000;
+            display: inline-block; /* Para que respete el padding y width */
+            text-align: center;
+        }
+        
         h1 { color: #00ff18; }
-        p { color: #00ff18; }
+        p { color: #aaa; }
         #mensajes, #resultado, footer { text-align: center; }
+        #resultado { min-height: 1.5em; font-size: 1.5em; }
         
-        footer {
-            margin-top: 30px;
-            color: #aaa;
-            font-size: 0.9em;
-        }
-        .feedback-button {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 15px;
-            background-color: #2a2a2a;
-            color: #ccc;
-            text-decoration: none;
-            border-radius: 8px;
-        }
+        footer { margin-top: 30px; color: #aaa; font-size: 0.9em; }
+        .feedback-button { display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #2a2a2a; color: #ccc; text-decoration: none; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -198,7 +130,7 @@
         
         <div class="menu-grid">
             <a href="#" class="menu-card" onclick="showScannerView(); return false;">
-                <div class="card-icon">🔎</div>
+                <div class="card-icon">🔍</div>
                 <div class="card-content">
                     <h2 class="card-title">Buscar Sector</h2>
                     <p class="card-description">Usa la cámara o ingresa un código para encontrar un sector.</p>
@@ -212,6 +144,8 @@
             <button class="back-button" onclick="showMenuView()">&#10094; Atrás</button>
             <h1>Buscador de Sector</h1>
         </div>
+
+        <button id="camera-toggle" class="camera-toggle-button"></button>
         
         <p>Apunta la cámara al código QR.</p>
         <div id="qr-reader"></div>
@@ -223,9 +157,12 @@
         </div>
 
         <div class="manual-search">
-            <p>O ingresa el código manualmente:</p>
+            <p>O usa una opción manual:</p>
             <input type="text" id="manualCodeInput" placeholder="Código o Nombre">
             <button onclick="buscarManualmente()">Buscar</button>
+
+            <input type="file" id="qr-input-file" accept="image/*" style="display:none;">
+            <label for="qr-input-file" class="upload-button">Subir Foto QR</label>
         </div>
 
         <div id="mensajes"></div>
@@ -240,21 +177,30 @@
     </footer>
 
     <script>
-    // --- LÓGICA DE NAVEGACIÓN ENTRE VISTAS ---
     const menuView = document.getElementById('menu-view');
     const scannerView = document.getElementById('scanner-view');
+    const qrReaderDiv = document.getElementById('qr-reader');
+    
+    // --- NUEVO --- Referencias a los nuevos botones y estado de la cámara
+    const cameraToggleButton = document.getElementById('camera-toggle');
+    const qrFileInput = document.getElementById('qr-input-file');
+    let isCameraOn = false;
+
     let html5QrCode;
 
+    // --- LÓGICA DE NAVEGACIÓN ---
     function showScannerView() {
         menuView.style.display = 'none';
         scannerView.style.display = 'block';
-        startCamera();
+        startCamera(); // Inicia la cámara por defecto al entrar
     }
 
     function showMenuView() {
         scannerView.style.display = 'none';
         menuView.style.display = 'block';
-        stopCamera();
+        if (isCameraOn) {
+            stopCamera();
+        }
     }
 const lugaresConCodigos = {
         'DP2': ['1025', '1026', '1027', '1028', '1029', '1030', '1031', '1032', '1034', '1039', '1040', '1044', '1045', '1046', '1051', '1052', '1056', '1079', '1081', '1082', '1083', '1089', '1090', '1094', '1096', '1155', '1156', '1157', '1158', '1159', '1160', '1161', '1162', '1163', '1164', '1165', '1166', '1167', '1168', '1169', '1170', '1171', '1172', '1173', '1174', '1175', '1176', '1177', '1178', '1179', '1180', '1181', '1182', '1183', '1184', '1185', '1186', '1187', '1188', '1189', '1190', '1191', '1192', '1193', '1194', '1195', '1196', '1197', '1198', '1199', '1200', '1201', '1202', '1203', '1204', '1205', '1206', '1207', '1208', '1209', '1210', '1211', '1212', '1213', '1214', '1215', '1265', '1266', '1267', '1268', '1269', '1270', '1271', '1272', '1273', '1274', '1275', '1276', '1277', '1278', '1279', '1280', '1281', '1282', '1283', '1284', '1285', '1286', '1287', '1288', '1289', '1290', '1291', '1292', '1293', '1294', '1295', '1296', '1308', '1308', '1315', '1324', '1344', '1405', '1413', '1414', '1415', '1416', '1424', '1427', '1432', '1433', '1437', '1499', '1022'],
