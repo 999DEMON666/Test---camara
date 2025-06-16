@@ -8,167 +8,77 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <style>
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; 
-            background-color: #0f0f0f; 
-            color: #e0e0e0;
-            display: flex; 
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center;
-            min-height: 100vh; 
-            margin: 0; 
-            padding: 20px 15px; 
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .container { 
-            background-color: #191919; 
-            padding: 20px; 
-            border-radius: 12px; 
-            box-shadow: 0 5px 25px rgba(0, 255, 24, 0.1); 
-            text-align: center; 
-            width: 100%; 
-            max-width: 420px; 
-            border: 1px solid #222;
-        }
-
-        /* --- ESTILOS MENÚ PRINCIPAL --- */
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: #0f0f0f; color: #e0e0e0; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px 15px; -webkit-tap-highlight-color: transparent; }
+        .container { background-color: #191919; padding: 20px; border-radius: 12px; box-shadow: 0 5px 25px rgba(0, 255, 24, 0.1); text-align: center; width: 100%; max-width: 420px; border: 1px solid #222; }
         #menu-view .menu-grid { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
         .menu-card { display: flex; align-items: center; gap: 20px; background-color: #2a2a2a; padding: 20px; border-radius: 12px; border: 1px solid #444; text-decoration: none; color: inherit; text-align: left; transition: border-color 0.2s, background-color 0.2s; }
         .menu-card:active { background-color: #333; border-color: #00ff18; }
         .card-icon { font-size: 2.5em; }
         .card-content .card-title { font-size: 1.4em; font-weight: bold; color: #00ff18; margin: 0; }
         .card-content .card-description { font-size: 0.9em; color: #ccc; margin: 5px 0 0 0; }
-
-        /* --- ESTILOS PARA EL BUSCADOR --- */
         .header-scanner { display: flex; justify-content: flex-start; align-items: center; margin-bottom: 15px; }
         .back-button { background: none; border: none; color: #ccc; font-size: 1.2em; cursor: pointer; padding: 5px 10px; }
         .header-scanner h1 { flex-grow: 1; margin: 0; padding-right: 30px;  }
-
-        /* --- NUEVO --- Estilos para el botón de prender/apagar cámara */
-        .camera-toggle-button {
-            width: 95%;
-            padding: 12px;
-            font-size: 1.1em;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: background-color 0.3s;
-        }
-        .camera-toggle-button.on {
-            background-color: #f44336; /* Rojo para "Apagar" */
-            color: white;
-        }
-        .camera-toggle-button.off {
-            background-color: #4CAF50; /* Verde para "Prender" */
-            color: white;
-        }
-
-        #qr-reader {
-            width: 100%;
-            max-width: 300px; 
-            margin: 0 auto 15px auto;
-            border: 2px solid #333; 
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            background-color: #000;
-        }
-        #qr-reader-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #555;
-            font-size: 1.5em;
-            height: 100%;
-        }
-
-        #torch-button { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: 1px solid rgba(255, 255, 255, 0.5); padding: 10px 20px; border-radius: 20px; z-index: 10; }
-        #torch-button.torch-on { background-color: #00ff18; color: black; }
-        #zoom-controls { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
-        .zoom-button { background-color: #333; color: white; border: 1px solid #555; border-radius: 8px; padding: 8px 16px; }
+        .camera-toggle-button { width: 95%; padding: 12px; font-size: 1.1em; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 20px; transition: background-color 0.3s; }
+        .camera-toggle-button.on { background-color: #f44336; color: white; }
+        .camera-toggle-button.off { background-color: #4CAF50; color: white; }
+        #qr-reader { width: 100%; max-width: 300px; margin: 0 auto 15px auto; border: 2px solid #333; border-radius: 8px; overflow: hidden; position: relative; background-color: #000; }
+        #qr-reader-placeholder { display: flex; align-items: center; justify-content: center; color: #555; font-size: 1.5em; height: 100%; }
+        #zoom-controls { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+        .zoom-button, #torch-button { background-color: #333; color: white; border: 1px solid #555; border-radius: 8px; padding: 8px 16px; font-size: 1em; }
         .zoom-button.active { background-color: #00ff18; color: black; }
-
+        #torch-button.torch-on { background-color: #ffeb3b; color: black; border-color: #fff; }
         .manual-search { margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; }
-        
-        #manualCodeInput {
-            width: 85%; padding: 18px; font-size: 2em; text-align: center;
-            border: 2px solid #444; border-radius: 8px; background-color: #333; color: #fff;
-        }
-
-        .manual-search button, .upload-button {
-            background-color: #00ff18; color: black; border: none; padding: 18px 30px;
-            font-size: 1.6em; font-weight: bold; border-radius: 8px; cursor: pointer;
-            margin-top: 15px; width: 85%; box-sizing: border-box;
-        }
-        
-        /* --- NUEVO --- Estilo específico para el botón de subir foto */
-        .upload-button {
-            background-color: #00ff42;
-            color: #000;
-            display: inline-block; /* Para que respete el padding y width */
-            text-align: center;
-        }
-        
+        #manualCodeInput { width: 85%; padding: 18px; font-size: 2em; text-align: center; border: 2px solid #444; border-radius: 8px; background-color: #333; color: #fff; }
+        .manual-search button, .upload-button { background-color: #00ff18; color: black; border: none; padding: 18px 30px; font-size: 1.6em; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 15px; width: 85%; box-sizing: border-box; }
+        .upload-button { background-color: #3f51b5; color: white; display: inline-block; text-align: center; }
         h1 { color: #00ff18; }
         p { color: #aaa; }
         #mensajes, #resultado, footer { text-align: center; }
         #resultado { min-height: 1.5em; font-size: 1.5em; }
-        
         footer { margin-top: 30px; color: #aaa; font-size: 0.9em; }
         .feedback-button { display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #2a2a2a; color: #ccc; text-decoration: none; border-radius: 8px; }
     </style>
 </head>
 <body>
-
     <div id="menu-view" class="container">
         <h1>Menú Principal</h1>
         <p>Selecciona una opción para continuar.</p>
-        
         <div class="menu-grid">
-            <a href="#" class="menu-card" onclick="showScannerView(); return false;">
+            <a href="#" class="menu-card" id="start-scanner-button">
                 <div class="card-icon">🔍</div>
                 <div class="card-content">
                     <h2 class="card-title">Buscar Sector</h2>
                     <p class="card-description">Usa la cámara o ingresa un código para encontrar un sector.</p>
                 </div>
             </a>
-            </div>
+        </div>
     </div>
-
     <div id="scanner-view" class="container" style="display: none;">
         <div class="header-scanner">
-            <button class="back-button" onclick="showMenuView()">&#10094; Atrás</button>
+            <button class="back-button" id="back-to-menu-button">&#10094; Atrás</button>
             <h1>Buscador de Sector</h1>
         </div>
-
         <button id="camera-toggle" class="camera-toggle-button"></button>
-        
         <p>Apunta la cámara al código QR.</p>
         <div id="qr-reader"></div>
-
         <div id="zoom-controls" style="display: none;">
             <button id="zoom-1x" class="zoom-button active">1x</button>
             <button id="zoom-1.5x" class="zoom-button">1.5x</button>
             <button id="zoom-2x" class="zoom-button">2x</button>
+            <button id="zoom-2.5x" class="zoom-button">2.5x</button>
+            <button id="torch-button" style="display: none;">💡 Linterna</button>
         </div>
-
         <div class="manual-search">
             <p>O usa una opción manual:</p>
             <input type="text" id="manualCodeInput" placeholder="Código o Nombre">
-            <button onclick="buscarManualmente()">Buscar</button>
-
+            <button id="manual-search-button">Buscar</button>
             <input type="file" id="qr-input-file" accept="image/*" style="display:none;">
-            <label for="qr-input-file" class="upload-button">Subir Foto QR</label>
+            <label for="qr-input-file" class="upload-button">📂 Subir Foto QR</label>
         </div>
-
         <div id="mensajes"></div>
         <h2 id="resultado"></h2>
     </div>
-
     <footer>
         <p>Propiedad de ®Gonzalez Agustin</p>
         <a href="mailto:tu-correo@gmail.com?subject=Sugerencia/Error - App Buscador de Sector" class="feedback-button">
@@ -177,31 +87,10 @@
     </footer>
 
     <script>
-    const menuView = document.getElementById('menu-view');
-    const scannerView = document.getElementById('scanner-view');
-    const qrReaderDiv = document.getElementById('qr-reader');
-    
-    // --- NUEVO --- Referencias a los nuevos botones y estado de la cámara
-    const cameraToggleButton = document.getElementById('camera-toggle');
-    const qrFileInput = document.getElementById('qr-input-file');
-    let isCameraOn = false;
-
     let html5QrCode;
-
-    // --- LÓGICA DE NAVEGACIÓN ---
-    function showScannerView() {
-        menuView.style.display = 'none';
-        scannerView.style.display = 'block';
-        startCamera(); // Inicia la cámara por defecto al entrar
-    }
-
-    function showMenuView() {
-        scannerView.style.display = 'none';
-        menuView.style.display = 'block';
-        if (isCameraOn) {
-            stopCamera();
-        }
-    }
+    let isCameraOn = false;
+    let torchOn = false; 
+    let audioContext;
 const lugaresConCodigos = {
         'DP2': ['1025', '1026', '1027', '1028', '1029', '1030', '1031', '1032', '1034', '1039', '1040', '1044', '1045', '1046', '1051', '1052', '1056', '1079', '1081', '1082', '1083', '1089', '1090', '1094', '1096', '1155', '1156', '1157', '1158', '1159', '1160', '1161', '1162', '1163', '1164', '1165', '1166', '1167', '1168', '1169', '1170', '1171', '1172', '1173', '1174', '1175', '1176', '1177', '1178', '1179', '1180', '1181', '1182', '1183', '1184', '1185', '1186', '1187', '1188', '1189', '1190', '1191', '1192', '1193', '1194', '1195', '1196', '1197', '1198', '1199', '1200', '1201', '1202', '1203', '1204', '1205', '1206', '1207', '1208', '1209', '1210', '1211', '1212', '1213', '1214', '1215', '1265', '1266', '1267', '1268', '1269', '1270', '1271', '1272', '1273', '1274', '1275', '1276', '1277', '1278', '1279', '1280', '1281', '1282', '1283', '1284', '1285', '1286', '1287', '1288', '1289', '1290', '1291', '1292', '1293', '1294', '1295', '1296', '1308', '1308', '1315', '1324', '1344', '1405', '1413', '1414', '1415', '1416', '1424', '1427', '1432', '1433', '1437', '1499', '1022'],
             'DP3': ['1822', '1823', '1824', '1825', '1826', '1833', '1834', '1835', '1836', '1837', '1840', '1843', '1844', '1845', '1846', '1847', '1848', '1849', '1850', '1851', '1852', '1853', '1854', '1855', '1856', '1857', '1858', '1859', '1860', '1861', '1862', '1863', '1867', '1868', '1869', '1870', '1871', '1872', '1873', '1874', '1875', '1876', '1877', '1878', '1879', '1880', '1881', '1882', '1883', '1884', '1885', '1886', '1887', '1888', '1889', '1890', '1891', '1892', '1893'],
@@ -242,131 +131,106 @@ const lugaresConCodigos = {
         'RIO GALLEGOS': ['9400', '9402', '9403', '9300', '9301', '9302', '9303', '9304', '9305', '9306', '9307', '9308', '9309', '9310', '9311', '9312', '9313', '9314', '9315', '9316', '9317', '9318', '9319', '9320', '9321', '9322', '9323', '9324', '9325', '9326', '9327', '9328', '9329', '9330', '9331', '9332', '9333', '9334', '9335', '9336', '9337', '9338', '9339', '9340', '9341', '9342', '9343', '9344', '9345', '9346', '9347', '9348', '9349', '9350', '9351', '9352', '9353', '9354', '9355', '9356', '9357', '9358', '9359', '9360', '9361', '9362', '9363', '9364', '9365', '9366', '9367', '9368', '9369', '9370', '9371', '9372', '9373', '9374', '9375', '9376', '9377', '9378', '9379', '9380', '9381', '9382', '9383', '9384', '9385', '9386', '9387', '9388', '9389', '9390', '9391', '9392', '9393', '9394', '9395', '9396', '9397', '9398', '9399', '9401', '9404', '9405', '9406', '9407', '9408'],
       'PARANA': ['2820', '2821', '2822', '2823', '2824', '2825', '2826', '2827', '2828', '2829', '2830', '2831', '2832', '2833', '2834', '2835', '2836', '2837', '2838', '2839', '2840', '2841', '2842', '2843', '2844', '2845', '2846', '2847', '2848', '2849', '2850', '2851', '2852', '2853', '2854', '2855', '2856', '2857', '2858', '2859', '2860', '2861', '2862', '2863', '2864', '2865', '2866', '2867', '2868', '2869', '2870', '2871', '2872', '2873', '2874', '2875', '2876', '2877', '2878', '2879', '2880', '2881', '2882', '2883', '2884', '2885', '2886', '2887', '2888', '2889', '2890', '2891', '2892', '2893', '2894', '2895', '2896', '2897', '2898', '2899', '3100', '3101', '3102', '3103', '3104', '3105', '3106', '3107', '3108', '3109', '3110', '3111', '3112', '3113', '3114', '3115', '3116', '3117', '3118', '3119', '3120', '3121', '3122', '3123', '3124', '3125', '3126', '3127', '3128', '3129', '3130', '3131', '3132', '3133', '3134', '3135', '3136', '3137', '3138', '3139', '3140', '3141', '3142', '3143', '3144', '3145', '3146', '3147', '3148', '3149', '3150', '3151', '3152', '3153', '3154', '3155', '3156', '3157', '3158', '3159', '3160', '3161', '3162', '3163', '3164', '3165', '3166', '3167', '3168', '3169', '3170', '3171', '3172', '3173', '3174', '3175', '3176', '3177', '3178', '3179', '3180', '3181', '3182', '3183', '3184', '3185', '3186', '3187', '3188', '3189', '3190', '3191', '3192', '3193', '3200', '3201', '3202', '3203', '3204', '3205', '3206', '3207', '3208', '3209', '3210', '3211', '3212', '3213', '3214', '3215', '3216', '3217', '3218', '3219', '3228', '3229', '3240', '3241', '3242', '3243', '3244', '3245', '3246', '3247', '3248', '3249', '3250', '3251', '3252', '3253', '3254', '3255', '3256', '3257', '3258', '3259', '3260', '3261', '3262', '3263', '3264', '3265', '3266', '3267', '3268', '3269', '3270', '3271', '3272', '3273', '3274', '3275', '3276', '3277', '3278', '3279', '3280', '3281', '3282', '3283', '3284', '3285', '3286', '3287', '3288', '3289', '3290', '3291', '3292', '3293', '3294', '3295', '3296', '3297', '3298', '3299']
     };
-    function buscarManualmente() {
-        const manualInput = document.getElementById('manualCodeInput');
-        realizarBusquedaYMostrarResultado(manualInput.value.trim());
-        manualInput.value = '';
-    }
+            function realizarBusquedaYMostrarResultado(codigo) { const r=document.getElementById('resultado'),e=document.getElementById('mensajes');r.innerHTML='',e.innerHTML='',codigo&&(isNaN(codigo)?r.innerHTML=(Object.keys(lugaresConCodigos).find(r=>r.toLowerCase()===codigo.toLowerCase())||"No encontrado"):`<b>${Object.keys(lugaresConCodigos).find(r=>lugaresConCodigos[r].includes(codigo))||"No encontrado"}</b>`); }
+    function obtenerCodigoDesdeQR(o){if(!o)return null;try{const t=JSON.parse(o);if(t&&"string"==typeof t.carrier_data){const r=t.carrier_data.split("|");if(r.length>2&&r[2])return r[2].trim()}}catch(r){}return o.includes("|")?o.split("|").filter(o=>o).pop().trim():o.trim()}
+    function playBeep() { try{if(!audioContext){audioContext=new(window.AudioContext||window.webkitAudioContext)()}const o=audioContext.createOscillator();o.type="sine",o.frequency.setValueAtTime(750,audioContext.currentTime),o.connect(audioContext.destination),o.start(),o.stop(audioContext.currentTime+.15)}catch(o){} }
     
-    function realizarBusquedaYMostrarResultado(codigo) {
-        const elementoResultado = document.getElementById('resultado');
-        const elementoMensajes = document.getElementById('mensajes');
-        elementoResultado.innerHTML = '';
-        elementoMensajes.innerHTML = '';
-        if (!codigo) { return; }
-        if (isNaN(codigo)) {
-            const sectorEncontrado = Object.keys(lugaresConCodigos).find(sector => sector.toLowerCase() === codigo.toLowerCase());
-            elementoResultado.innerHTML = sectorEncontrado ? `<b>${sectorEncontrado}</b>` : "No encontrado";
-        } else {
-            let lugarEncontrado = Object.keys(lugaresConCodigos).find(lugar => lugaresConCodigos[lugar].includes(codigo));
-            elementoResultado.innerHTML = lugarEncontrado ? `<b>${lugarEncontrado}</b>` : "No encontrado";
-        }
-    }
-
-    function obtenerCodigoDesdeQR(textoQR) {
-        if (!textoQR) return null;
-        try {
-            const datosQR = JSON.parse(textoQR);
-            if (datosQR && typeof datosQR.carrier_data === 'string') {
-                const partes = datosQR.carrier_data.split('|');
-                if (partes.length > 2 && partes[2]) return partes[2].trim();
-            }
-        } catch (error) {}
-        if (textoQR.includes('|')) {
-            const partes = textoQR.split('|').filter(p => p);
-            if (partes.length > 0) return partes[partes.length - 1].trim();
-        }
-        return textoQR.trim();
-    }
-    
-    // --- LÓGICA DE LA CÁMARA Y CONTROLES ---
-    let audioContext;
-    function playBeep() { try{if(!audioContext){audioContext=new(window.AudioContext||window.webkitAudioContext)()}const o=audioContext.createOscillator();o.type="sine";o.frequency.setValueAtTime(750,audioContext.currentTime);o.connect(audioContext.destination);o.start();o.stop(audioContext.currentTime+.15)}catch(o){} }
-    function onScanSuccess(decodedText, decodedResult) { playBeep();const codigoPostal=obtenerCodigoDesdeQR(decodedText);document.getElementById("manualCodeInput").value=codigoPostal;realizarBusquedaYMostrarResultado(codigoPostal); }
-    function onScanFailure(error) {}
-
-    // --- NUEVO --- Lógica del botón de encendido/apagado de cámara
-    cameraToggleButton.addEventListener('click', () => {
-        if (isCameraOn) {
-            stopCamera();
-        } else {
-            startCamera();
-        }
-    });
-
-    // --- NUEVO --- Función para actualizar el estado visual del botón
-    function updateToggleButton() {
-        if (isCameraOn) {
-            cameraToggleButton.textContent = 'Apagar Cámara';
-            cameraToggleButton.className = 'camera-toggle-button on';
-        } else {
-            cameraToggleButton.textContent = 'Prender Cámara';
-            cameraToggleButton.className = 'camera-toggle-button off';
-            qrReaderDiv.innerHTML = '<div id="qr-reader-placeholder">Cámara apagada</div>';
-        }
-    }
-
-    function startCamera() {
-        if (isCameraOn) return; // Ya está prendida
-
-        const config = { fps: 10, qrbox: { width: 250, height: 250 }, supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA] };
-        
-        html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
-        .then(() => {
-            isCameraOn = true;
-            updateToggleButton();
-            setupAdvancedControls();
-        })
-        .catch(err => {
-            console.error("No se pudo iniciar la cámara.", err);
-            isCameraOn = false;
-            updateToggleButton();
-            qrReaderDiv.innerHTML = '<div id="qr-reader-placeholder">Error al iniciar cámara</div>';
-        });
-    }
-
-    function stopCamera() {
-        if (!isCameraOn) return; // Ya está apagada
-
-        html5QrCode.stop()
-        .then(() => {
-            isCameraOn = false;
-            updateToggleButton();
-        }).catch(err => {
-            console.error("Error al detener la cámara.", err);
-            isCameraOn = false; // Forzar estado
-            updateToggleButton();
-        });
-    }
-
-    function setupAdvancedControls() { /* ... (código de linterna y zoom sin cambios) ... */ }
-    
-    // --- NUEVO --- Lógica para el botón de subir foto
-    qrFileInput.addEventListener('change', e => {
-        if (e.target.files.length == 0) {
-            return;
-        }
-        const imageFile = e.target.files[0];
-        // Si la cámara está prendida, la apagamos para evitar conflictos
-        if (isCameraOn) {
-            stopCamera();
-        }
-        
-        html5QrCode.scanFile(imageFile, true) // true = showImage
-        .then(decodedText => {
-            document.getElementById('mensajes').innerHTML = `<p style="color: #00ff18;">QR de imagen leído correctamente.</p>`;
-            onScanSuccess(decodedText);
-        })
-        .catch(err => {
-            document.getElementById('resultado').innerHTML = "No se encontró QR en la imagen.";
-            console.log(`Error al escanear archivo. ${err}`);
-        });
-    });
-
-    // Se ejecuta cuando el DOM está listo
     document.addEventListener('DOMContentLoaded', () => {
-        html5QrCode = new Html5Qrcode("qr-reader", false);
-        updateToggleButton(); // Establece el estado inicial del botón
+        const menuView = document.getElementById('menu-view');
+        const scannerView = document.getElementById('scanner-view');
+        const qrReaderDiv = document.getElementById('qr-reader');
+        const cameraToggleButton = document.getElementById('camera-toggle');
+        const qrFileInput = document.getElementById('qr-input-file');
+        
+        html5QrCode = new Html5Qrcode("qr-reader", { "verbose": false });
+
+        function showScannerView() { menuView.style.display = 'none'; scannerView.style.display = 'block'; startCamera(); }
+        function showMenuView() { scannerView.style.display = 'none'; menuView.style.display = 'block'; if (isCameraOn) { stopCamera(); } }
+        
+        function onScanSuccess(decodedText) { playBeep(); const codigoPostal = obtenerCodigoDesdeQR(decodedText); document.getElementById("manualCodeInput").value = codigoPostal; realizarBusquedaYMostrarResultado(codigoPostal); }
+        function onScanFailure(error) { /* No hacemos nada */ }
+
+        function updateToggleButton() { if (isCameraOn) { cameraToggleButton.textContent = 'Apagar Cámara'; cameraToggleButton.className = 'camera-toggle-button on'; } else { cameraToggleButton.textContent = 'Prender Cámara'; cameraToggleButton.className = 'camera-toggle-button off'; qrReaderDiv.innerHTML = '<div id="qr-reader-placeholder">Cámara apagada</div>'; } }
+
+        function startCamera() {
+            if (isCameraOn || !html5QrCode) return;
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            
+            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
+            .then(() => {
+                isCameraOn = true;
+                updateToggleButton();
+                setupAdvancedControls(); 
+                document.querySelectorAll(".zoom-button").forEach(btn => btn.classList.remove("active"));
+                const defaultZoomButton = document.getElementById('zoom-1x');
+                if (defaultZoomButton) defaultZoomButton.classList.add("active");
+            })
+            .catch(err => {
+                console.error("No se pudo iniciar la cámara.", err);
+                isCameraOn = false;
+                updateToggleButton();
+                qrReaderDiv.innerHTML = `<div id="qr-reader-placeholder">Error al iniciar cámara</div>`;
+            });
+        }
+
+        // --- MODIFICADO --- Ahora la función devuelve la promesa de la operación stop.
+        function stopCamera() {
+            if (!isCameraOn || !html5QrCode || !html5QrCode.isScanning) {
+                isCameraOn = false; // Asegurar que el estado se actualice
+                updateToggleButton();
+                return Promise.resolve(); // Devuelve una promesa resuelta si no hay nada que hacer.
+            }
+
+            const torchButton = document.getElementById('torch-button');
+            if (torchOn) {
+                torchOn = false;
+                if(torchButton) torchButton.classList.remove('torch-on');
+            }
+            
+            // --- AÑADIDO --- 'return' para que se pueda esperar a que termine.
+            return html5QrCode.stop()
+            .then(() => {
+                isCameraOn = false;
+                updateToggleButton();
+                document.getElementById('zoom-controls').style.display = 'none';
+                if(torchButton) torchButton.style.display = 'none';
+            }).catch(err => {
+                console.error("Error al detener la cámara (puede ser normal).", err);
+                isCameraOn = false; // Forzar el estado a 'apagado'
+                updateToggleButton();
+            });
+        }
+
+        function setupAdvancedControls() { /* ... (sin cambios) ... */ }
+        
+        updateToggleButton(); 
+        
+        cameraToggleButton.addEventListener('click', () => { if (isCameraOn) { stopCamera(); } else { startCamera(); } });
+        
+        // --- MODIFICADO --- Se usa 'async/await' para esperar a que la cámara se apague.
+        qrFileInput.addEventListener('change', async (e) => {
+            if (e.target.files.length == 0) return;
+            const imageFile = e.target.files[0];
+            
+            // Si la cámara está encendida, esperamos a que se apague.
+            if (isCameraOn) {
+                await stopCamera();
+            }
+            
+            // Este código solo se ejecuta DESPUÉS de que la cámara se ha detenido.
+            try {
+                const decodedText = await html5QrCode.scanFile(imageFile, true);
+                document.getElementById('mensajes').innerHTML = `<p style="color: #00ff18;">QR de imagen leído.</p>`;
+                onScanSuccess(decodedText);
+            } catch (err) {
+                document.getElementById('resultado').innerHTML = "No se encontró QR en la imagen.";
+                console.log(`Error al escanear archivo: ${err}`);
+            }
+        });
+        
+        document.getElementById('start-scanner-button').addEventListener('click', (e) => { e.preventDefault(); showScannerView(); });
+        document.getElementById('back-to-menu-button').addEventListener('click', showMenuView);
+        document.getElementById('manual-search-button').addEventListener('click', () => { const manualInput = document.getElementById('manualCodeInput'); realizarBusquedaYMostrarResultado(manualInput.value.trim()); manualInput.value = ''; });
     });
     </script>
 </body>
