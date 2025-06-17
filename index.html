@@ -3,94 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Sector</title>
+    <title>Multiherramienta QR</title>
     
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: #0f0f0f; color: #e0e0e0; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px 15px; -webkit-tap-highlight-color: transparent; }
-        .container { background-color: #191919; padding: 20px; border-radius: 12px; box-shadow: 0 5px 25px rgba(0, 255, 24, 0.1); text-align: center; width: 100%; max-width: 420px; border: 1px solid #222; }
-        #menu-view .menu-grid { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-        .menu-card { display: flex; align-items: center; gap: 20px; background-color: #2a2a2a; padding: 20px; border-radius: 12px; border: 1px solid #444; text-decoration: none; color: inherit; text-align: left; transition: border-color 0.2s, background-color 0.2s; }
-        .menu-card:active { background-color: #333; border-color: #00ff18; }
-        .card-icon { font-size: 2.5em; }
-        .card-content .card-title { font-size: 1.4em; font-weight: bold; color: #00ff18; margin: 0; }
-        .card-content .card-description { font-size: 0.9em; color: #ccc; margin: 5px 0 0 0; }
-        .header-scanner { display: flex; justify-content: flex-start; align-items: center; margin-bottom: 15px; }
-        .back-button { background: none; border: none; color: #ccc; font-size: 1.2em; cursor: pointer; padding: 5px 10px; }
-        .header-scanner h1 { flex-grow: 1; margin: 0; padding-right: 30px;  }
-        .camera-toggle-button { width: 95%; padding: 12px; font-size: 1.1em; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 20px; transition: background-color 0.3s; }
-        .camera-toggle-button.on { background-color: #f44336; color: white; }
-        .camera-toggle-button.off { background-color: #4CAF50; color: white; }
-        #qr-reader { width: 100%; max-width: 300px; margin: 0 auto 15px auto; border: 2px solid #333; border-radius: 8px; overflow: hidden; position: relative; background-color: #000; }
-        #qr-reader-placeholder { display: flex; align-items: center; justify-content: center; color: #555; font-size: 1.5em; height: 100%; }
-        #zoom-controls { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        .zoom-button, #torch-button { background-color: #333; color: white; border: 1px solid #555; border-radius: 8px; padding: 8px 16px; font-size: 1em; }
-        .zoom-button.active { background-color: #00ff18; color: black; }
-        #torch-button.torch-on { background-color: #ffeb3b; color: black; border-color: #fff; }
-        .manual-search { margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; }
-        #manualCodeInput { width: 85%; padding: 18px; font-size: 2em; text-align: center; border: 2px solid #444; border-radius: 8px; background-color: #333; color: #fff; }
-        .manual-search button, .upload-button { background-color: #00ff18; color: black; border: none; padding: 18px 30px; font-size: 1.6em; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 15px; width: 85%; box-sizing: border-box; }
-        .upload-button { background-color: #3f51b5; color: white; display: inline-block; text-align: center; }
-        h1 { color: #00ff18; }
-        p { color: #aaa; }
-        #mensajes, #resultado, footer { text-align: center; }
-        #resultado { min-height: 1.5em; font-size: 1.5em; }
-        footer { margin-top: 30px; color: #aaa; font-size: 0.9em; }
-        .feedback-button { display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #2a2a2a; color: #ccc; text-decoration: none; border-radius: 8px; }
+        /* Estilos Generales */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; 
+            background-color: #0f0f0f; 
+            color: #e0e0e0;
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px 15px; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container { 
+            background-color: #191919; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 5px 25px rgba(0, 255, 24, 0.1); 
+            text-align: center; 
+            width: 100%; 
+            max-width: 420px; 
+            border: 1px solid #222;
+        }
+
+        /* --- Estructura de Vistas (Menú, Buscador, Contador) --- */
+        .view {
+            display: none; /* Oculta todas las vistas por defecto */
+        }
+        .view.active {
+            display: block; /* Muestra solo la vista activa */
+        }
+        
+        /* --- Estilos del Menú Principal --- */
+        #menu-view .menu-button {
+            display: block;
+            width: 100%;
+            background-color: #00ff18;
+            color: black;
+            border: none;
+            padding: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        #menu-view .menu-button:hover {
+            transform: scale(1.03);
+        }
+
+        /* --- Estilos Comunes y del Buscador de Sector --- */
+        .qr-reader-container {
+            width: 100%;
+            max-width: 300px; 
+            margin: 20px auto;
+            border: 2px solid #333; 
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .torch-button {
+            position: absolute; bottom: 15px; left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white; border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 10px 20px; font-size: 1em; font-weight: bold;
+            border-radius: 20px; cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            z-index: 10;
+        }
+        .torch-button.torch-on {
+            background-color: #00ff18; color: black;
+            box-shadow: 0 0 15px #00ff18;
+        }
+
+        .zoom-controls {
+            display: flex; justify-content: center;
+            gap: 10px; margin-top: 15px;
+        }
+        .zoom-button {
+            background-color: #333; color: white; border: 1px solid #555;
+            border-radius: 8px; padding: 8px 16px; font-size: 0.9em;
+            font-weight: bold; cursor: pointer;
+        }
+        .zoom-button.active {
+            background-color: #00ff18; color: black; border-color: #00ff18;
+        }
+        
+        .manual-search {
+            margin-top: 30px; padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+        
+        #manualCodeInput {
+            width: 70%; padding: 12px; font-size: 1.5em; text-align: center;
+            border: 2px solid #444; border-radius: 8px;
+            background-color: #333; color: #fff;
+        }
+
+        .action-button {
+            background-color: #00ff18; color: black; border: none;
+            padding: 15px 25px; font-size: 1.1em; font-weight: bold;
+            border-radius: 8px; cursor: pointer; margin-top: 15px;
+        }
+
+        .back-button {
+            background-color: #444; color: white;
+            margin-top: 25px; padding: 12px 20px;
+        }
+        
+        h1, h2 { color: #00ff18; }
+        h1 { font-size: 1.8em; margin-bottom: 10px; }
+        h2 { font-size: 1.7em; }
+        p { color: #ccc; }
+        #mensajes, #mensajes-contador { min-height: 20px; font-weight: bold; }
+        #resultado { min-height: 50px; font-weight: bold; color: #00ff18; font-size: 1.7em; }
+        
+        /* --- Estilos Específicos del Contador QR --- */
+        #contador-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #00ff18;
+            margin: 15px 0;
+        }
+        #lista-codigos {
+            list-style-type: none;
+            padding: 0;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: #222;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-align: left;
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #lista-codigos li {
+            padding: 5px;
+            border-bottom: 1px solid #333;
+        }
+
+        footer { margin-top: 30px; color: #00ff18; font-size: 0.9em; }
     </style>
 </head>
 <body>
-    <div id="menu-view" class="container">
-        <h1>Menú Principal</h1>
-        <p>Selecciona una opción para continuar.</p>
-        <div class="menu-grid">
-            <a href="#" class="menu-card" id="start-scanner-button">
-                <div class="card-icon">🔍</div>
-                <div class="card-content">
-                    <h2 class="card-title">Buscar Sector</h2>
-                    <p class="card-description">Usa la cámara o ingresa un código para encontrar un sector.</p>
-                </div>
-            </a>
+    <div class="container">
+
+        <div id="menu-view" class="view active">
+            <h1>Menú Principal</h1>
+            <p>Selecciona una herramienta para comenzar.</p>
+            <button class="menu-button" onclick="showView('sector-finder-view')">Buscador de Sector</button>
+            <button class="menu-button" onclick="showView('qr-counter-view')">Contador de QR</button>
         </div>
-    </div>
-    <div id="scanner-view" class="container" style="display: none;">
-        <div class="header-scanner">
-            <button class="back-button" id="back-to-menu-button">&#10094; Atrás</button>
+
+        <div id="sector-finder-view" class="view">
             <h1>Buscador de Sector</h1>
+            <p>Apunta la cámara al código QR.</p>
+            <div id="qr-reader-finder" class="qr-reader-container"></div>
+            <div id="zoom-controls-finder" class="zoom-controls" style="display: none;">
+                <button id="zoom-1x-finder" class="zoom-button active">1x</button>
+                <button id="zoom-1.5x-finder" class="zoom-button">1.5x</button>
+                <button id="zoom-2x-finder" class="zoom-button">2x</button>
+            </div>
+            <div class="manual-search">
+                <p>O ingresa el código manualmente:</p>
+                <input type="text" id="manualCodeInput" placeholder="Código o Nombre">
+                <button class="action-button" onclick="buscarManualmente()">Buscar</button>
+            </div>
+            <div id="mensajes"></div>
+            <h2 id="resultado"></h2>
+            <button class="action-button back-button" onclick="showView('menu-view')">Volver al Menú</button>
         </div>
-        <button id="camera-toggle" class="camera-toggle-button"></button>
-        <p>Apunta la cámara al código QR.</p>
-        <div id="qr-reader"></div>
-        <div id="zoom-controls" style="display: none;">
-            <button id="zoom-1x" class="zoom-button active">1x</button>
-            <button id="zoom-1.5x" class="zoom-button">1.5x</button>
-            <button id="zoom-2x" class="zoom-button">2x</button>
-            <button id="zoom-2.5x" class="zoom-button">2.5x</button>
-            <button id="torch-button" style="display: none;">💡 Linterna</button>
+
+        <div id="qr-counter-view" class="view">
+            <h1>Contador de Guías</h1>
+            <p>Escanea los QR para contarlos.</p>
+            <div id="qr-reader-counter" class="qr-reader-container"></div>
+            <div id="mensajes-contador"></div>
+            <h2>Total escaneados:</h2>
+            <div id="contador-display">0</div>
+            <ul id="lista-codigos"></ul>
+            <button class="action-button" onclick="enviarPorCorreo()">Finalizar y Enviar por Correo</button>
+            <button class="action-button back-button" onclick="showView('menu-view')">Volver al Menú</button>
         </div>
-        <div class="manual-search">
-            <p>O usa una opción manual:</p>
-            <input type="text" id="manualCodeInput" placeholder="Código o Nombre">
-            <button id="manual-search-button">Buscar</button>
-            <input type="file" id="qr-input-file" accept="image/*" style="display:none;">
-            <label for="qr-input-file" class="upload-button">📂 Subir Foto QR</label>
-        </div>
-        <div id="mensajes"></div>
-        <h2 id="resultado"></h2>
     </div>
+
     <footer>
         <p>Propiedad de ®Gonzalez Agustin</p>
-        <a href="mailto:tu-correo@gmail.com?subject=Sugerencia/Error - App Buscador de Sector" class="feedback-button">
-            Sugerencias y/o errores
-        </a>
     </footer>
 
     <script>
-    let html5QrCode;
-    let isCameraOn = false;
-    let torchOn = false; 
-    let audioContext;
+    // ========= VARIABLES GLOBALES Y DE ESTADO =========
+    let html5QrCodeFinder;
+    let html5QrCodeCounter;
+    let currentView = 'menu-view';
 const lugaresConCodigos = {
         'DP2': ['1025', '1026', '1027', '1028', '1029', '1030', '1031', '1032', '1034', '1039', '1040', '1044', '1045', '1046', '1051', '1052', '1056', '1079', '1081', '1082', '1083', '1089', '1090', '1094', '1096', '1155', '1156', '1157', '1158', '1159', '1160', '1161', '1162', '1163', '1164', '1165', '1166', '1167', '1168', '1169', '1170', '1171', '1172', '1173', '1174', '1175', '1176', '1177', '1178', '1179', '1180', '1181', '1182', '1183', '1184', '1185', '1186', '1187', '1188', '1189', '1190', '1191', '1192', '1193', '1194', '1195', '1196', '1197', '1198', '1199', '1200', '1201', '1202', '1203', '1204', '1205', '1206', '1207', '1208', '1209', '1210', '1211', '1212', '1213', '1214', '1215', '1265', '1266', '1267', '1268', '1269', '1270', '1271', '1272', '1273', '1274', '1275', '1276', '1277', '1278', '1279', '1280', '1281', '1282', '1283', '1284', '1285', '1286', '1287', '1288', '1289', '1290', '1291', '1292', '1293', '1294', '1295', '1296', '1308', '1308', '1315', '1324', '1344', '1405', '1413', '1414', '1415', '1416', '1424', '1427', '1432', '1433', '1437', '1499', '1022'],
             'DP3': ['1822', '1823', '1824', '1825', '1826', '1833', '1834', '1835', '1836', '1837', '1840', '1843', '1844', '1845', '1846', '1847', '1848', '1849', '1850', '1851', '1852', '1853', '1854', '1855', '1856', '1857', '1858', '1859', '1860', '1861', '1862', '1863', '1867', '1868', '1869', '1870', '1871', '1872', '1873', '1874', '1875', '1876', '1877', '1878', '1879', '1880', '1881', '1882', '1883', '1884', '1885', '1886', '1887', '1888', '1889', '1890', '1891', '1892', '1893'],
