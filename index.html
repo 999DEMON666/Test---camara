@@ -247,24 +247,16 @@ const lugaresConCodigos = {
         'RIO GALLEGOS': ['9400', '9402', '9403', '9300', '9301', '9302', '9303', '9304', '9305', '9306', '9307', '9308', '9309', '9310', '9311', '9312', '9313', '9314', '9315', '9316', '9317', '9318', '9319', '9320', '9321', '9322', '9323', '9324', '9325', '9326', '9327', '9328', '9329', '9330', '9331', '9332', '9333', '9334', '9335', '9336', '9337', '9338', '9339', '9340', '9341', '9342', '9343', '9344', '9345', '9346', '9347', '9348', '9349', '9350', '9351', '9352', '9353', '9354', '9355', '9356', '9357', '9358', '9359', '9360', '9361', '9362', '9363', '9364', '9365', '9366', '9367', '9368', '9369', '9370', '9371', '9372', '9373', '9374', '9375', '9376', '9377', '9378', '9379', '9380', '9381', '9382', '9383', '9384', '9385', '9386', '9387', '9388', '9389', '9390', '9391', '9392', '9393', '9394', '9395', '9396', '9397', '9398', '9399', '9401', '9404', '9405', '9406', '9407', '9408'],
       'PARANA': ['2820', '2821', '2822', '2823', '2824', '2825', '2826', '2827', '2828', '2829', '2830', '2831', '2832', '2833', '2834', '2835', '2836', '2837', '2838', '2839', '2840', '2841', '2842', '2843', '2844', '2845', '2846', '2847', '2848', '2849', '2850', '2851', '2852', '2853', '2854', '2855', '2856', '2857', '2858', '2859', '2860', '2861', '2862', '2863', '2864', '2865', '2866', '2867', '2868', '2869', '2870', '2871', '2872', '2873', '2874', '2875', '2876', '2877', '2878', '2879', '2880', '2881', '2882', '2883', '2884', '2885', '2886', '2887', '2888', '2889', '2890', '2891', '2892', '2893', '2894', '2895', '2896', '2897', '2898', '2899', '3100', '3101', '3102', '3103', '3104', '3105', '3106', '3107', '3108', '3109', '3110', '3111', '3112', '3113', '3114', '3115', '3116', '3117', '3118', '3119', '3120', '3121', '3122', '3123', '3124', '3125', '3126', '3127', '3128', '3129', '3130', '3131', '3132', '3133', '3134', '3135', '3136', '3137', '3138', '3139', '3140', '3141', '3142', '3143', '3144', '3145', '3146', '3147', '3148', '3149', '3150', '3151', '3152', '3153', '3154', '3155', '3156', '3157', '3158', '3159', '3160', '3161', '3162', '3163', '3164', '3165', '3166', '3167', '3168', '3169', '3170', '3171', '3172', '3173', '3174', '3175', '3176', '3177', '3178', '3179', '3180', '3181', '3182', '3183', '3184', '3185', '3186', '3187', '3188', '3189', '3190', '3191', '3192', '3193', '3200', '3201', '3202', '3203', '3204', '3205', '3206', '3207', '3208', '3209', '3210', '3211', '3212', '3213', '3214', '3215', '3216', '3217', '3218', '3219', '3228', '3229', '3240', '3241', '3242', '3243', '3244', '3245', '3246', '3247', '3248', '3249', '3250', '3251', '3252', '3253', '3254', '3255', '3256', '3257', '3258', '3259', '3260', '3261', '3262', '3263', '3264', '3265', '3266', '3267', '3268', '3269', '3270', '3271', '3272', '3273', '3274', '3275', '3276', '3277', '3278', '3279', '3280', '3281', '3282', '3283', '3284', '3285', '3286', '3287', '3288', '3289', '3290', '3291', '3292', '3293', '3294', '3295', '3296', '3297', '3298', '3299']
     };
-    let codigosEscaneados = []; // Array para guardar los códigos del contador
+let codigosEscaneados = []; // Array para guardar los códigos del contador
 
     // ========= MANEJO DE VISTAS Y NAVEGACIÓN =========
     
     function showView(viewId) {
-        // Detener cualquier escáner activo antes de cambiar de vista
         stopAllScanners();
-
-        // Ocultar todas las vistas
-        document.querySelectorAll('.view').forEach(view => {
-            view.classList.remove('active');
-        });
-
-        // Mostrar la vista seleccionada
+        document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
         currentView = viewId;
 
-        // Iniciar el escáner correspondiente si la nueva vista lo requiere
         if (viewId === 'sector-finder-view') {
             iniciarBuscadorSector();
         } else if (viewId === 'qr-counter-view') {
@@ -291,7 +283,8 @@ const lugaresConCodigos = {
 
         startCamera(html5QrCodeFinder, config, onScanSuccessFinder, onScanFailure, mensajesElement)
             .then(() => {
-                setupAdvancedControls(html5QrCodeFinder, 'zoom-controls-finder', 'qr-reader-finder');
+                // Configura los controles para el buscador de sector
+                setupAdvancedControls(html5QrCodeFinder, 'finder');
             });
     }
 
@@ -361,33 +354,33 @@ const lugaresConCodigos = {
     // ========= FUNCIONALIDAD: NUEVO CONTADOR DE QR =========
 
     function iniciarContadorQR() {
-        codigosEscaneados = []; // Reinicia la lista cada vez que se entra a la vista
+        codigosEscaneados = [];
         actualizarContadorUI();
         
         const mensajesElement = document.getElementById('mensajes-contador');
         html5QrCodeCounter = new Html5Qrcode("qr-reader-counter");
-        const config = { fps: 5, qrbox: { width: 250, height: 250 } }; // FPS más bajo, no necesita ser tan rápido
+        const config = { fps: 5, qrbox: { width: 250, height: 250 } };
 
-        startCamera(html5QrCodeCounter, config, onScanSuccessCounter, onScanFailure, mensajesElement);
+        startCamera(html5QrCodeCounter, config, onScanSuccessCounter, onScanFailure, mensajesElement)
+            .then(() => {
+                // ¡NUEVO! Configura los controles para el contador de QR
+                setupAdvancedControls(html5QrCodeCounter, 'counter');
+            });
     }
 
     function onScanSuccessCounter(decodedText, decodedResult) {
         try {
             const datosQR = JSON.parse(decodedText);
-            // Verifica que el QR tenga el formato esperado
             if (datosQR && typeof datosQR.carrier_data === 'string') {
                 const codigoExtraido = datosQR.carrier_data.split('|')[0].trim();
                 
-                // Si el código es válido y no ha sido escaneado antes
                 if (codigoExtraido && !codigosEscaneados.includes(codigoExtraido)) {
                     playBeep();
                     codigosEscaneados.push(codigoExtraido);
                     actualizarContadorUI();
                 }
             }
-        } catch (e) {
-            // Ignora los QR que no son JSON o tienen un formato incorrecto
-        }
+        } catch (e) { /* Ignora QR con formato incorrecto */ }
     }
 
     function actualizarContadorUI() {
@@ -396,14 +389,12 @@ const lugaresConCodigos = {
         
         contadorDisplay.innerText = codigosEscaneados.length;
         
-        // Actualiza la lista de códigos visualmente
         listaCodigos.innerHTML = '';
         codigosEscaneados.forEach(codigo => {
             const li = document.createElement('li');
             li.textContent = codigo;
             listaCodigos.appendChild(li);
         });
-        // Scroll hasta el final de la lista
         listaCodigos.scrollTop = listaCodigos.scrollHeight;
     }
 
@@ -412,14 +403,9 @@ const lugaresConCodigos = {
             alert("No se ha escaneado ningún código para enviar.");
             return;
         }
-
         const asunto = "Listado de Guías Escaneadas";
         const cuerpo = "Se adjunta el listado de guías escaneadas:\n\n" + codigosEscaneados.join("\n");
-        
-        // Crea un enlace 'mailto' que abre el cliente de correo del usuario
         const mailtoLink = `mailto:?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
-        
-        // Abre el cliente de correo
         window.location.href = mailtoLink;
     }
 
@@ -438,7 +424,7 @@ const lugaresConCodigos = {
         } catch (e) {}
     }
 
-    function onScanFailure(error) { /* Se puede ignorar o usar para depuración */ }
+    function onScanFailure(error) { /* Se ignora */ }
 
     function startCamera(scannerInstance, config, scanSuccessCallback, scanFailureCallback, messageElement) {
         return Html5Qrcode.getCameras().then(cameras => {
@@ -453,26 +439,27 @@ const lugaresConCodigos = {
         });
     }
 
-    function setupAdvancedControls(scannerInstance, zoomControlsId, qrReaderId) {
+    // -- FUNCIÓN DE CONTROLES MODIFICADA PARA SER REUTILIZABLE --
+    function setupAdvancedControls(scannerInstance, suffix) {
+        const qrReaderId = `qr-reader-${suffix}`;
+        const zoomControlsId = `zoom-controls-${suffix}`;
+        
         try {
             const capabilities = scannerInstance.getRunningTrackCapabilities();
-            
+            const qrReaderElement = document.getElementById(qrReaderId);
+
             // Control de Linterna
-            if (capabilities.torch) {
-                const qrReaderElement = document.getElementById(qrReaderId);
-                let torchButton = qrReaderElement.querySelector('.torch-button');
-                if (!torchButton) {
-                     torchButton = document.createElement('button');
-                     torchButton.className = 'torch-button';
-                     torchButton.innerHTML = '🔦 Linterna';
-                     qrReaderElement.appendChild(torchButton);
-                     let torchOn = false;
-                     torchButton.addEventListener('click', () => {
-                         torchOn = !torchOn;
-                         scannerInstance.applyVideoConstraints({ advanced: [{ torch: torchOn }] });
-                         torchButton.classList.toggle('torch-on', torchOn);
-                     });
-                }
+            if (capabilities.torch && !qrReaderElement.querySelector('.torch-button')) {
+                const torchButton = document.createElement('button');
+                torchButton.className = 'torch-button';
+                torchButton.innerHTML = '🔦 Linterna';
+                qrReaderElement.appendChild(torchButton);
+                let torchOn = false;
+                torchButton.addEventListener('click', () => {
+                    torchOn = !torchOn;
+                    scannerInstance.applyVideoConstraints({ advanced: [{ torch: torchOn }] });
+                    torchButton.classList.toggle('torch-on', torchOn);
+                });
             }
 
             // Control de Zoom
@@ -480,7 +467,8 @@ const lugaresConCodigos = {
                 const zoomControls = document.getElementById(zoomControlsId);
                 zoomControls.style.display = 'flex';
                 [1, 1.5, 2].forEach(level => {
-                    const zoomButton = document.getElementById(`zoom-${level}x-finder`);
+                    // Construye el ID del botón dinámicamente usando el sufijo
+                    const zoomButton = document.getElementById(`zoom-${level}x-${suffix}`);
                     zoomButton.addEventListener('click', () => {
                         scannerInstance.applyVideoConstraints({ advanced: [{ zoom: level }] });
                         document.querySelectorAll(`#${zoomControlsId} .zoom-button`).forEach(btn => btn.classList.remove('active'));
