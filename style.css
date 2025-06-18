@@ -1,12 +1,11 @@
 /* Estilos Generales */
 body {
       .boton-sugestion button {
-            background-color: #282828;
+            background-color: transparent;
             color: #00ff2d;
-            padding: 5px 100px;
+            padding: none;
             border: none;
-            border-radius: 3px;
-            font-size: 3px;
+            font-size: 18px;
         }    
             .boton-sugestion {
             display: flex;
