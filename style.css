@@ -21,8 +21,8 @@ body {
 }
 
 .copyright-text {
-    font-size: 0.9em;
-    color: #888888;
+    font-size: 1em;
+    color: #26ff00;
 }
 
    .boton-sugestion button {
@@ -182,4 +182,4 @@ p { color: #ccc; }
     border-bottom: 1px solid #333;
 }
 
-footer { margin-top: 0px; color: #11ff00; font-size: 0.9em; }
+footer { display: flex; margin-top: 30px; color: #11ff00; font-size: 0.9em; width: auto; height: auto;}
