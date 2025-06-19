@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multiherramienta QR</title>
+    
     <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 <body>
 
@@ -14,21 +14,16 @@
     </div>
 
     <div class="top-bar">
-        <span class="back-arrow" onclick="goBackOrToMenu();">&#8592;</span>
-        <img src="logo_lima.png" alt="Logo de Lima" class="header-logo">
-        <span class="top-bar-title">Multiherramienta QR</span>
+        <img src="logo_lima.png" alt="Logo de Lima" class="header-logo"> <span class="top-bar-title">LIME</span> <div class="top-bar-icons">
+            </div>
     </div>
 
     <div class="container">
         <div id="menu-view" class="view active">
             <h1>Menú Principal</h1>
             <p>Selecciona una herramienta para comenzar.</p>
-            <a href="buscador_sector.html" class="menu-button-link">
-                <button class="menu-button">Buscador de Sector</button>
-            </a>
-            <a href="contador_qr.html" class="menu-button-link">
-                <button class="menu-button">Contador O.T</button>
-            </a>
+            <button class="menu-button" onclick="location.href='sector_finder.html'">Buscador de Sector</button>
+            <button class="menu-button" onclick="location.href='qr_counter.html'">Contador de QR</button>
         </div>
     </div>
 
@@ -50,6 +45,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script> 
+    <script src="script.js"></script>
 </body>
 </html>
