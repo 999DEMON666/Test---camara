@@ -151,7 +151,8 @@
 
         // Detener el lector QR cuando se abandone la página (buena práctica)
         window.addEventListener('beforeunload', () => {
-            if (html5QrCodeCounter.is="true") { // Verificar si está corriendo
+            // CORRECCIÓN AQUÍ: de is="true" a isScanning
+            if (html5QrCodeCounter.isScanning) { // Verificar si está corriendo
                 html5QrCodeCounter.stop().catch(err => console.warn("Error al detener lector:", err));
             }
         });
