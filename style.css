@@ -125,7 +125,7 @@ body > .container { /* Selector más específico para el container principal */
 #menu-view {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Esto centra los elementos flex horizontalmente */
 }
 
 #menu-view h1 {
@@ -140,8 +140,10 @@ body > .container { /* Selector más específico para el container principal */
 }
 
 #menu-view .menu-button {
-    display: block;
-    width: 100%;
+    /* display: block;  Normalmente un button ya es inline-block o se comporta como bloque */
+    width: 90%; /* Ajustamos el ancho para que no ocupe todo el dispositivo */
+    max-width: 300px; /* Ancho máximo para pantallas más grandes */
+    margin: 15px auto; /* Centra el botón horizontalmente y añade un poco de margen superior/inferior */
     background-color: #00ff18;
     color: black;
     border: none;
@@ -150,7 +152,6 @@ body > .container { /* Selector más específico para el container principal */
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
-    margin-top: 20px;
     transition: transform 0.2s;
 }
 #menu-view .menu-button:hover {
