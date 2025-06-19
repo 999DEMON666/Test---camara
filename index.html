@@ -10,6 +10,16 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 <body>
+
+    <div id="splash-screen">
+        <img src="logo_lima.png" alt="Logo de Multiherramienta QR" class="splash-logo">
+    </div>
+
+    <div class="top-bar">
+        <span class="back-arrow" onclick="goBackOrToMenu();">&#8592;</span> <img src="logo_lima.png" alt="Logo de Lima" class="header-logo"> <span class="top-bar-title">LIME</span> <div class="top-bar-icons">
+            </div>
+    </div>
+
     <div class="container">
 
         <div id="menu-view" class="view active">
@@ -55,20 +65,23 @@
             <button class="action-button back-button" onclick="showView('menu-view')">Volver al Menú</button>
         </div>
     </div>
-    <div class="boton-sugestion">
-      <a href="mailto:sophostscan@gmail.com?subject=Sugerencia%20o%20error&body=Hola%20he%20encontrado%20un%20error:">
-         <button>Sugerencias y/o errores</button>
-      </a>
-    </div>
-    <div class="legal-links">
-            <a href="politica-privacidad.html">Política de Privacidad</a>
-            <span class="separator">|</span>
-            <a href="terminos-condiciones.html">Términos y Condiciones</a>
-        </div>
 
     <footer>
-        <p class="copyright-text">
-            © 2025 Agustín Gonzalez</p>
+        <div class="footer-content-wrapper">
+            <div class="boton-sugestion">
+                <a href="mailto:sophostscan@gmail.com?subject=Sugerencia%20o%20error&body=Hola%20he%20encontrado%20un%20error:">
+                   <button>Sugerencias y/o errores</button>
+                </a>
+            </div>
+            <div class="legal-links">
+                <a href="politica-privacidad.html">Política de Privacidad</a>
+                <span class="separator">|</span>
+                <a href="terminos-condiciones.html">Términos y Condiciones</a>
+            </div>
+            <p class="copyright-text">
+                © 2025 Agustín Gonzalez
+            </p>
+        </div>
     </footer>
 
     <script src="script.js"></script>

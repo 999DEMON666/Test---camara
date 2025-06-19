@@ -1,77 +1,143 @@
-/* Estilos Generales */
-body { 
-.legal-links {
-    margin-bottom: 10px; /* Espacio entre los enlaces legales y el copyright */
-    font-size: 0.9em;
-}
-
-.legal-links a {
-    color: #a0a0a0; /* Color del texto de los enlaces */
-    text-decoration: none; /* Quitar subrayado */
-    margin: 0 5px; /* Espacio entre enlaces */
-    transition: color 0.3s ease;
-}
-
-.legal-links a:hover {
-    color: lime; /* Color al pasar el ratón */
-}
-
-.legal-links .separator {
-    color: #a0a0a0; /* Color del separador */
-}
-
-.copyright-text {
-    font-size: 1em;
-    color: #26ff00;
-}
-
-   .boton-sugestion button {
-            background-color: transparent;
-            color: #00ff2d;
-            padding: none;
-            border: none;
-            font-size: 18px;
-}
-            .boton-sugestion {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 20px;
-            margin-top: 100px;
-}
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; 
-    background-color: #0f0f0f; 
+/* --- Estilos Generales y del Body --- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #0f0f0f;
     color: #e0e0e0;
-    display: flex; 
+    display: flex;
     flex-direction: column;
-    justify-content: center; 
+    justify-content: space-between;
     align-items: center;
-    min-height: 100vh; 
-    margin: 0; 
-    padding: 20px 15px; 
+    min-height: 100vh;
+    margin: 0;
+    padding: 0; /* Ajustamos el padding del body a 0, la top-bar y el container lo manejarán */
     -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box; /* Asegura que padding no aumente el tamaño total del elemento */
+    overflow-x: hidden; /* Evita el scroll horizontal en caso de desbordamiento */
 }
-.container { 
-    background-color: #191919; 
-    padding: 20px; 
-    border-radius: 12px; 
-    box-shadow: 0 5px 25px rgba(0, 255, 24, 0.1); 
-    text-align: center; 
-    width: 100%; 
-    max-width: 420px; 
+
+/* --- SPLASH SCREEN (Pantalla de carga inicial) --- */
+#splash-screen {
+    position: fixed; /* Ocupa toda la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0f0f0f; /* Mismo color de fondo que el body */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Asegura que esté por encima de todo */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out; /* Transición para ocultar */
+}
+
+.splash-logo {
+    width: 200px; /* Tamaño del logo en la pantalla de carga */
+    height: auto;
+    animation: fadeInScale 1.5s ease-out; /* Animación de entrada */
+}
+
+@keyframes fadeInScale {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Cuando el splash screen se oculte */
+#splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* --- BARRA SUPERIOR (Encabezado permanente) --- */
+.top-bar {
+    position: fixed; /* Fija la barra en la parte superior */
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Distribuye los elementos */
+    padding: 10px 15px; /* Padding interno */
+    background-color: #1a1a1a; /* Color de fondo oscuro */
+    color: white;
+    font-size: 1.1em;
+    z-index: 1000; /* Asegura que esté por encima del contenido */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    box-sizing: border-box; /* Incluye padding en el ancho */
+}
+
+.back-arrow {
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-right: 15px; /* Espacio entre la flecha y el logo */
+    color: #00ff18; /* Color de la flecha */
+}
+
+.header-logo {
+    height: 30px; /* Tamaño del logo en la barra superior */
+    width: auto;
+    margin-right: auto; /* Empuja el título y los iconos a la derecha */
+}
+
+.top-bar-title {
+    flex-grow: 1; /* Permite que el título ocupe el espacio restante */
+    text-align: center; /* Centra el título */
+    font-weight: bold;
+    color: #e0e0e0;
+}
+
+.top-bar-icons {
+    display: flex;
+    gap: 10px; /* Espacio entre iconos si los agregas */
+}
+
+/* Padding para el body para que el contenido no quede debajo de la top-bar */
+body > .container { /* Selector más específico para el container principal */
+    margin-top: 60px; /* Altura de la top-bar (ajusta si cambias el padding de top-bar) */
+    flex-grow: 1; /* Permite que el contenedor principal ocupe el espacio */
+}
+
+
+/* Contenedor principal de vistas */
+.container {
+    background-color: #191919;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 255, 24, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 420px;
     border: 1px solid #222;
+    margin-bottom: 20px; /* Espacio entre el container y el footer */
 }
 
 /* --- Estructura de Vistas (Menú, Buscador, Contador) --- */
 .view {
-    display: none; /* Oculta todas las vistas por defecto */
+    display: none;
 }
 .view.active {
-    display: block; /* Muestra solo la vista activa */
+    display: block;
 }
 
 /* --- Estilos del Menú Principal --- */
+#menu-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#menu-view h1 {
+    color: #00ff18;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+#menu-view p {
+    color: #ccc;
+    margin-bottom: 25px;
+}
+
 #menu-view .menu-button {
     display: block;
     width: 100%;
@@ -90,12 +156,17 @@ body {
     transform: scale(1.03);
 }
 
-/* --- Estilos Comunes y del Buscador de Sector --- */
+/* --- Estilos Comunes para las Vistas (h1, h2, p) --- */
+h1, h2 { color: #00ff18; }
+h1 { font-size: 1.8em; margin-bottom: 10px; }
+h2 { font-size: 1.7em; }
+p { color: #ccc; }
+
 .qr-reader-container {
     width: 100%;
-    max-width: 300px; 
+    max-width: 300px;
     margin: 20px auto;
-    border: 2px solid #333; 
+    border: 2px solid #333;
     border-radius: 8px;
     overflow: hidden;
     position: relative;
@@ -151,10 +222,6 @@ body {
     margin-top: 25px; padding: 12px 20px;
 }
 
-h1, h2 { color: #00ff18; }
-h1 { font-size: 1.8em; margin-bottom: 10px; }
-h2 { font-size: 1.7em; }
-p { color: #ccc; }
 #mensajes, #mensajes-contador { min-height: 20px; font-weight: bold; }
 #resultado { min-height: 50px; font-weight: bold; color: #00ff18; font-size: 1.7em; }
 
@@ -182,4 +249,89 @@ p { color: #ccc; }
     border-bottom: 1px solid #333;
 }
 
-footer { display: flex; margin-top: 30px; color: #11ff00; font-size: 0.9em; width: auto; height: auto;}
+/* --- ESTILOS DEL PIE DE PÁGINA --- */
+footer {
+    display: flex;
+    justify-content: center; /* Centra el "footer-content-wrapper" horizontalmente */
+    width: 100%; /* El footer abarca todo el ancho del body */
+    margin-top: 30px; /* O 'auto' si quieres que empuje hacia abajo */
+    padding-bottom: 20px;
+    background-color: transparent; /* Por defecto sin fondo, o puedes ponerle uno */
+}
+
+/* Wrapper para el contenido del footer */
+.footer-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra horizontalmente todos los elementos DENTRO de este wrapper */
+    width: 100%;
+    max-width: 420px; /* IMPORTANTE: Esto lo alinea con el max-width del .container */
+    padding: 0 15px; /* Para que coincida con el padding lateral del body */
+    box-sizing: border-box;
+}
+
+/* Estilos del botón de sugerencias */
+.boton-sugestion {
+    display: flex;
+    justify-content: center; /* Centra el botón dentro de este div */
+    width: 100%; /* Ocupa el 100% del wrapper */
+    margin-top: 50px;
+    margin-bottom: 15px;
+}
+
+.boton-sugestion a {
+    text-decoration: none;
+    display: block;
+    width: 90%;
+    max-width: 300px;
+}
+
+.boton-sugestion button {
+    background-color: transparent;
+    color: #00ff2d;
+    padding: 10px 0;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    width: 100%;
+    transition: color 0.3s ease;
+}
+.boton-sugestion button:hover {
+    color: #00e600;
+}
+
+/* Estilos para los enlaces legales */
+.legal-links {
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    display: flex; /* Convierte .legal-links en un contenedor flex */
+    justify-content: center; /* Centra los elementos (a y span) dentro de .legal-links */
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    width: 100%; /* Ocupa todo el ancho del footer-content-wrapper */
+}
+
+.legal-links a {
+    color: #a0a0a0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.legal-links a:hover {
+    color: lime;
+}
+
+.legal-links .separator {
+    color: #a0a0a0;
+    margin: 0;
+}
+
+/* Estilo para el texto de copyright */
+.copyright-text {
+    font-size: 1em; /* Lo dejé en 1em, puedes ajustar a 0.9em o el que desees */
+    color: #26ff00; /* Color verde que tienes, puedes ajustar */
+    margin-top: 5px;
+    margin-bottom: 0;
+    text-align: center;
+}

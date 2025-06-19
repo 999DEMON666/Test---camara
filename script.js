@@ -1,3 +1,38 @@
+document.addEventListener('DOMContentLoaded', (event) => {
+    const splashScreen = document.getElementById('splash-screen');
+    const body = document.body;
+
+    // Ocultar el splash screen después de 2-3 segundos (ajusta el tiempo)
+    setTimeout(() => {
+        splashScreen.classList.add('hidden'); // Añade la clase para ocultar con transición
+        body.style.overflowY = 'auto'; // Habilita el scroll del body si es necesario
+    }, 2500); // 2.5 segundos
+
+    // Función para la flecha de "Volver" en la top-bar
+    // Asumo que tienes una función showView(viewId) en tu script.js
+    window.goBackOrToMenu = function() {
+        // Si hay historial de navegación, vuelve
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // Si no hay historial, ve al menú principal
+            showView('menu-view');
+        }
+    };
+});
+
+// Asegúrate de que tu función showView exista en tu script.js
+// Ejemplo básico (si no la tienes ya):
+function showView(viewId) {
+    const views = document.querySelectorAll('.view');
+    views.forEach(view => {
+        view.classList.remove('active');
+    });
+    document.getElementById(viewId).classList.add('active');
+}
+
+// ... el resto de tu script.js (funciones de buscador, contador, etc.)
+
 // ========= VARIABLES GLOBALES Y DE ESTADO =========
 let html5QrCodeFinder;
 let html5QrCodeCounter;
