@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Sector - Multiherramienta QR</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+    <div class="top-bar">
+        <span class="back-arrow" onclick="goBackOrToMenu();">&#8592;</span>
+        <img src="logo_lima.png" alt="Logo de Lima" class="header-logo">
+        <span class="top-bar-title">Multiherramienta QR</span>
+    </div>
+
+    <div class="container">
+        <div id="sector-finder-view" class="view active">
+            <h1>Buscador de Sector</h1>
+            <p>Apunta la cámara al código QR.</p>
+            <div id="qr-reader-finder" class="qr-reader-container"></div>
+            <div id="zoom-controls-finder" class="zoom-controls" style="display: none;">
+                <button id="zoom-1x-finder" class="zoom-button active">1x</button>
+                <button id="zoom-1.5x-finder" class="zoom-button">1.5x</button>
+                <button id="zoom-2x-finder" class="zoom-button">2x</button>
+            </div>
+            <div class="manual-search">
+                <p>O ingresa el código manualmente:</p>
+                <input type="text" id="manualCodeInput" placeholder="Código o Nombre">
+                <button class="action-button" onclick="buscarManualmente()">Buscar</button>
+            </div>
+            <div id="mensajes"></div>
+            <h2 id="resultado"></h2>
+            <button class="action-button back-button" onclick="window.location.href='index.html';">Volver al Menú</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content-wrapper">
+            <div class="boton-sugestion">
+                <a href="mailto:sophostscan@gmail.com?subject=Sugerencia%20o%20error&body=Hola%20he%20encontrado%20un%20error:">
+                   <button>Sugerencias y/o errores</button>
+                </a>
+            </div>
+            <div class="legal-links">
+                <a href="politica-privacidad.html">Política de Privacidad</a>
+                <span class="separator">|</span>
+                <a href="terminos-condiciones.html">Términos y Condiciones</a>
+            </div>
+            <p class="copyright-text">
+                © 2025 Agustín Gonzalez
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Declarar el lector QR aquí
+        const html5QrCodeFinder = new Html5Qrcode("qr-reader-finder");
+        const qrCodeSuccessCallbackFinder = (decodedText, decodedResult) => {
+            document.getElementById('resultado').textContent = "Código: " + decodedText;
+            document.getElementById('mensajes').textContent = "Escaneado con éxito.";
+            // Lógica para buscar en tu base de datos o lista de sectores.
+        };
+        const configFinder = { fps: 10, qrbox: { width: 250, height: 250 } };
+        
+        // Función para la búsqueda manual
+        function buscarManualmente() {
+            const manualCode = document.getElementById('manualCodeInput').value;
+            if (manualCode) {
+                document.getElementById('resultado').textContent = "Buscando: " + manualCode;
+                document.getElementById('mensajes').textContent = "Búsqueda manual.";
+                // Lógica de búsqueda manual con 'manualCode'
+            } else {
+                document.getElementById('mensajes').textContent = "Ingresa un código.";
+            }
+        }
+
+        // Iniciar el lector cuando la página cargue
+        document.addEventListener('DOMContentLoaded', () => {
+            html5QrCodeFinder.start({ facingMode: "environment" }, configFinder, qrCodeSuccessCallbackFinder)
+                .catch(err => {
+                    console.error("Error al iniciar el lector QR en buscador_sector:", err);
+                    document.getElementById('mensajes').textContent = "Error al iniciar cámara: " + err;
+                });
+        });
+
+        // Detener el lector QR cuando se abandone la página (opcional, pero buena práctica)
+        window.addEventListener('beforeunload', () => {
+            if (html5QrCodeFinder.is='true') { // Verificar si está corriendo
+                html5QrCodeFinder.stop().catch(err => console.warn("Error al detener lector:", err));
+            }
+        });
+    </script>
+</body>
+</html>

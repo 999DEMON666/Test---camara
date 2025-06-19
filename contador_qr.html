@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de QR - Multiherramienta QR</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+    <div class="top-bar">
+        <span class="back-arrow" onclick="goBackOrToMenu();">&#8592;</span>
+        <img src="logo_lima.png" alt="Logo de Lima" class="header-logo">
+        <span class="top-bar-title">Multiherramienta QR</span>
+    </div>
+
+    <div class="container">
+        <div id="qr-counter-view" class="view active">
+            <h1>Contador de Guías</h1>
+            <p>Escanea los QR para contarlos.</p>
+            <div id="qr-reader-counter" class="qr-reader-container"></div>
+            <div id="zoom-controls-counter" class="zoom-controls" style="display: none;">
+                <button id="zoom-1x-counter" class="zoom-button active">1x</button>
+                <button id="zoom-1.5x-counter" class="zoom-button">1.5x</button>
+                <button id="zoom-2x-counter" class="zoom-button">2x</button>
+            </div>
+            <div id="mensajes-contador"></div>
+            <h2>Total escaneados:</h2>
+            <div id="contador-display">0</div>
+            <ul id="lista-codigos"></ul>
+
+            <button class="action-button" onclick="enviarPorCorreo()">Finalizar y Enviar por Correo</button>
+            <button class="action-button delete-last-button" onclick="borrarUltimoQr()">Borrar Último QR</button>
+            <button class="action-button back-button" onclick="window.location.href='index.html';">Volver al Menú</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content-wrapper">
+            <div class="boton-sugestion">
+                <a href="mailto:sophostscan@gmail.com?subject=Sugerencia%20o%20error&body=Hola%20he%20encontrado%20un%20error:">
+                   <button>Sugerencias y/o errores</button>
+                </a>
+            </div>
+            <div class="legal-links">
+                <a href="politica-privacidad.html">Política de Privacidad</a>
+                <span class="separator">|</span>
+                <a href="terminos-condiciones.html">Términos y Condiciones</a>
+            </div>
+            <p class="copyright-text">
+                © 2025 Agustín Gonzalez
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Variables para el contador y códigos
+        let totalEscaneados = 0;
+        let codigosEscaneados = [];
+
+        // Lector QR
+        const html5QrCodeCounter = new Html5Qrcode("qr-reader-counter");
+        const qrCodeSuccessCallbackCounter = (decodedText, decodedResult) => {
+            // Lógica para añadir el código, solo si no se repite inmediatamente
+            if (codigosEscaneados.length === 0 || codigosEscaneados[codigosEscaneados.length - 1] !== decodedText) {
+                totalEscaneados++;
+                codigosEscaneados.push(decodedText);
+                document.getElementById('contador-display').textContent = totalEscaneados;
+                const listaCodigos = document.getElementById('lista-codigos');
+                const nuevoLi = document.createElement('li');
+                nuevoLi.textContent = decodedText;
+                listaCodigos.appendChild(nuevoLi);
+                document.getElementById('mensajes-contador').textContent = "QR Escaneado: " + decodedText;
+
+                guardarDatosContador(); // Guardar cada vez que se escanea
+            } else {
+                document.getElementById('mensajes-contador').textContent = "QR ya escaneado (ignorando repetición)";
+            }
+        };
+        const configCounter = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        // Función para enviar por correo
+        function enviarPorCorreo() {
+            let bodyCorreo = "Códigos QR escaneados:\n\n";
+            codigosEscaneados.forEach((codigo, index) => {
+                bodyCorreo += `${index + 1}. ${codigo}\n`;
+            });
+            bodyCorreo += `\nTotal: ${totalEscaneados}`;
+
+            window.location.href = `mailto:sophostscan@gmail.com?subject=Reporte%20de%20QR%20Escaneados&body=${encodeURIComponent(bodyCorreo)}`;
+        }
+
+        // Función para borrar el último QR escaneado
+        function borrarUltimoQr() {
+            if (codigosEscaneados.length > 0) {
+                const ultimoQr = codigosEscaneados.pop();
+                totalEscaneados--;
+                document.getElementById('contador-display').textContent = totalEscaneados;
+
+                const listaCodigos = document.getElementById('lista-codigos');
+                if (listaCodigos.lastChild) {
+                    listaCodigos.removeChild(listaCodigos.lastChild);
+                }
+                document.getElementById('mensajes-contador').textContent = `Último QR borrado: ${ultimoQr}`;
+
+                guardarDatosContador();
+            } else {
+                document.getElementById('mensajes-contador').textContent = "No hay QR's para borrar.";
+            }
+        }
+
+        // --- Persistencia de Datos con localStorage ---
+
+        // Función para guardar los datos
+        function guardarDatosContador() {
+            localStorage.setItem('totalEscaneados', totalEscaneados);
+            localStorage.setItem('codigosEscaneados', JSON.stringify(codigosEscaneados));
+        }
+
+        // Función para cargar los datos
+        function cargarDatosContador() {
+            const storedTotal = localStorage.getItem('totalEscaneados');
+            const storedCodigos = localStorage.getItem('codigosEscaneados');
+
+            if (storedTotal !== null) {
+                totalEscaneados = parseInt(storedTotal);
+                document.getElementById('contador-display').textContent = totalEscaneados;
+            }
+            if (storedCodigos !== null) {
+                codigosEscaneados = JSON.parse(storedCodigos);
+                const listaCodigos = document.getElementById('lista-codigos');
+                listaCodigos.innerHTML = '';
+                codigosEscaneados.forEach(codigo => {
+                    const nuevoLi = document.createElement('li');
+                    nuevoLi.textContent = codigo;
+                    listaCodigos.appendChild(nuevoLi);
+                });
+            }
+        }
+        
+        // Iniciar el lector y cargar datos al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarDatosContador(); // Cargar datos al inicio
+            html5QrCodeCounter.start({ facingMode: "environment" }, configCounter, qrCodeSuccessCallbackCounter)
+                .catch(err => {
+                    console.error("Error al iniciar el lector QR en contador_qr:", err);
+                    document.getElementById('mensajes-contador').textContent = "Error al iniciar cámara: " + err;
+                });
+        });
+
+        // Detener el lector QR cuando se abandone la página (buena práctica)
+        window.addEventListener('beforeunload', () => {
+            if (html5QrCodeCounter.is="true") { // Verificar si está corriendo
+                html5QrCodeCounter.stop().catch(err => console.warn("Error al detener lector:", err));
+            }
+        });
+    </script>
+</body>
+</html>

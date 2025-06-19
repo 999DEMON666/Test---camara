@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIME Multiherramienta QR</title>
-    
+    <title>Multiherramienta QR</title>
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 <body>
@@ -16,53 +14,21 @@
     </div>
 
     <div class="top-bar">
-        <span class="back-arrow" onclick="goBackOrToMenu();">&#8592;</span> <img src="logo_lima.png" alt="Logo de Lima" class="header-logo"> <span class="top-bar-title">LIME</span> <div class="top-bar-icons">
-            </div>
+        <span class="back-arrow" onclick="goBackOrToMenu();">&#8592;</span>
+        <img src="logo_lima.png" alt="Logo de Lima" class="header-logo">
+        <span class="top-bar-title">Multiherramienta QR</span>
     </div>
 
     <div class="container">
-
         <div id="menu-view" class="view active">
             <h1>Menú Principal</h1>
             <p>Selecciona una herramienta para comenzar.</p>
-            <button class="menu-button" onclick="showView('sector-finder-view')">Buscador de Sector</button>
-            <button class="menu-button" onclick="showView('qr-counter-view')">Contador de QR</button>
-        </div>
-
-        <div id="sector-finder-view" class="view">
-            <h1>Buscador de Sector</h1>
-            <p>Apunta la cámara al código QR.</p>
-            <div id="qr-reader-finder" class="qr-reader-container"></div>
-            <div id="zoom-controls-finder" class="zoom-controls" style="display: none;">
-                <button id="zoom-1x-finder" class="zoom-button active">1x</button>
-                <button id="zoom-1.5x-finder" class="zoom-button">1.5x</button>
-                <button id="zoom-2x-finder" class="zoom-button">2x</button>
-            </div>
-            <div class="manual-search">
-                <p>O ingresa el código manualmente:</p>
-                <input type="text" id="manualCodeInput" placeholder="Código o Nombre">
-                <button class="action-button" onclick="buscarManualmente()">Buscar</button>
-            </div>
-            <div id="mensajes"></div>
-            <h2 id="resultado"></h2>
-            <button class="action-button back-button" onclick="showView('menu-view')">Volver al Menú</button>
-        </div>
-
-        <div id="qr-counter-view" class="view">
-            <h1>Contador de Guías</h1>
-            <p>Escanea los QR para contarlos.</p>
-            <div id="qr-reader-counter" class="qr-reader-container"></div>
-            <div id="zoom-controls-counter" class="zoom-controls" style="display: none;">
-                <button id="zoom-1x-counter" class="zoom-button active">1x</button>
-                <button id="zoom-1.5x-counter" class="zoom-button">1.5x</button>
-                <button id="zoom-2x-counter" class="zoom-button">2x</button>
-            </div>
-            <div id="mensajes-contador"></div>
-            <h2>Total escaneados:</h2>
-            <div id="contador-display">0</div>
-            <ul id="lista-codigos"></ul>
-            <button class="action-button" onclick="enviarPorCorreo()">Finalizar y Enviar por Correo</button>
-            <button class="action-button back-button" onclick="showView('menu-view')">Volver al Menú</button>
+            <a href="buscador_sector.html" class="menu-button-link">
+                <button class="menu-button">Buscador de Sector</button>
+            </a>
+            <a href="contador_qr.html" class="menu-button-link">
+                <button class="menu-button">Contador O.T</button>
+            </a>
         </div>
     </div>
 
@@ -84,6 +50,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js"></script> 
 </body>
 </html>

@@ -77,7 +77,7 @@ body {
 .header-logo {
     height: 30px; /* Tamaño del logo en la barra superior */
     width: auto;
-    margin-right: auto; /* Empuja el título y los iconos a la derecha */
+    /* margin-right: auto; -- Eliminado, ya que top-bar-title ocupará el espacio */
 }
 
 .top-bar-title {
@@ -96,6 +96,7 @@ body {
 body > .container { /* Selector más específico para el container principal */
     margin-top: 60px; /* Altura de la top-bar (ajusta si cambias el padding de top-bar) */
     flex-grow: 1; /* Permite que el contenedor principal ocupe el espacio */
+    margin-bottom: 20px; /* Espacio entre el container y el footer */
 }
 
 
@@ -109,7 +110,7 @@ body > .container { /* Selector más específico para el container principal */
     width: 100%;
     max-width: 420px;
     border: 1px solid #222;
-    margin-bottom: 20px; /* Espacio entre el container y el footer */
+    /* margin-bottom movido a body > .container */
 }
 
 /* --- Estructura de Vistas (Menú, Buscador, Contador) --- */
@@ -120,7 +121,7 @@ body > .container { /* Selector más específico para el container principal */
     display: block;
 }
 
-/* --- Estilos del Menú Principal --- */
+/* --- Estilos del Menú Principal (Ahora con enlaces de botones) --- */
 #menu-view {
     display: flex;
     flex-direction: column;
@@ -138,18 +139,30 @@ body > .container { /* Selector más específico para el container principal */
     margin-bottom: 25px;
 }
 
+/* Estilo para el <a> que envuelve los botones del menú principal */
+.menu-button-link {
+    display: block;
+    width: 80%; /* El enlace ocupa todo el ancho de su contenedor */
+    text-decoration: none;
+    margin-top: 20px;
+    
+    /* MODIFICACIÓN AQUÍ: Limita el ancho del enlace y lo centra */
+    max-width: 300px; /* Ajusta este valor para el ancho máximo deseado */
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #menu-view .menu-button {
     display: block;
-    width: 100%;
+    width: 100%; /* El botón ocupará el 100% del ancho de .menu-button-link */
     background-color: #00ff18;
     color: black;
     border: none;
-    padding: 20px;
+    padding: 5px; /* Aumentado el padding para que sea más alto */
     font-size: 1.3em;
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
-    margin-top: 20px;
     transition: transform 0.2s;
 }
 #menu-view .menu-button:hover {
@@ -211,15 +224,46 @@ p { color: #ccc; }
     background-color: #333; color: #fff;
 }
 
+/* Estilos de los botones de acción */
 .action-button {
-    background-color: #00ff18; color: black; border: none;
-    padding: 15px 25px; font-size: 1.1em; font-weight: bold;
-    border-radius: 8px; cursor: pointer; margin-top: 15px;
+    background-color: #00ff18;
+    color: black;
+    border: none;
+    padding: 15px 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.2s, transform 0.2s;
+    
+    /* MODIFICACIÓN AQUÍ: Limita el ancho del botón y lo centra */
+    max-width: 300px; /* Ancho máximo para el botón */
+    display: block; /* Asegura que margin: auto funcione */
+    margin-left: auto;
+    margin-right: auto;
+}
+.action-button:hover {
+    background-color: #00e600;
+    transform: translateY(-2px);
 }
 
 .back-button {
-    background-color: #444; color: white;
-    margin-top: 25px; padding: 12px 20px;
+    background-color: #444;
+    color: white;
+    margin-top: 25px;
+    padding: 12px 20px;
+    transition: background-color 0.2s, transform 0.2s;
+    
+    /* MODIFICACIÓN AQUÍ: Limita el ancho del botón y lo centra */
+    max-width: 200px; /* Un poco más estrecho para 'Volver' */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.back-button:hover {
+    background-color: #555;
+    transform: translateY(-2px);
 }
 
 #mensajes, #mensajes-contador { min-height: 20px; font-weight: bold; }
@@ -249,14 +293,31 @@ p { color: #ccc; }
     border-bottom: 1px solid #333;
 }
 
+/* Nuevo botón de borrar en Contador de QR */
+.delete-last-button {
+    background-color: #dc3545; /* Rojo */
+    color: white;
+    margin-top: 10px; /* Espacio con el botón anterior */
+    transition: background-color 0.2s, transform 0.2s;
+    
+    /* MODIFICACIÓN AQUÍ: Limita el ancho del botón y lo centra (compartirá .action-button) */
+    /* Estas propiedades ya están en .action-button, así que este selector solo necesita el color */
+}
+.delete-last-button:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+
 /* --- ESTILOS DEL PIE DE PÁGINA --- */
 footer {
     display: flex;
     justify-content: center; /* Centra el "footer-content-wrapper" horizontalmente */
-    width: 100%; /* El footer abarca todo el ancho del body */
-    margin-top: 30px; /* O 'auto' si quieres que empuje hacia abajo */
+    width: 100%;
+    margin-top: auto; /* Empuja el footer hacia abajo */
     padding-bottom: 20px;
     background-color: transparent; /* Por defecto sin fondo, o puedes ponerle uno */
+    box-sizing: border-box; /* Asegura que padding no aumente el tamaño total del footer */
 }
 
 /* Wrapper para el contenido del footer */
@@ -273,8 +334,8 @@ footer {
 /* Estilos del botón de sugerencias */
 .boton-sugestion {
     display: flex;
-    justify-content: center; /* Centra el botón dentro de este div */
-    width: 100%; /* Ocupa el 100% del wrapper */
+    justify-content: center;
+    width: 100%;
     margin-top: 50px;
     margin-bottom: 15px;
 }
@@ -283,7 +344,7 @@ footer {
     text-decoration: none;
     display: block;
     width: 90%;
-    max-width: 300px;
+    max-width: 300px; /* Este ya limita el ancho del enlace/botón */
 }
 
 .boton-sugestion button {
@@ -293,7 +354,7 @@ footer {
     border: none;
     font-size: 18px;
     cursor: pointer;
-    width: 100%;
+    width: 100%; /* Ocupa el 100% del <a>, que tiene max-width */
     transition: color 0.3s ease;
 }
 .boton-sugestion button:hover {
@@ -304,12 +365,12 @@ footer {
 .legal-links {
     margin-bottom: 10px;
     font-size: 0.9em;
-    display: flex; /* Convierte .legal-links en un contenedor flex */
-    justify-content: center; /* Centra los elementos (a y span) dentro de .legal-links */
+    display: flex;
+    justify-content: center;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
-    width: 100%; /* Ocupa todo el ancho del footer-content-wrapper */
+    width: 100%;
 }
 
 .legal-links a {
@@ -329,8 +390,8 @@ footer {
 
 /* Estilo para el texto de copyright */
 .copyright-text {
-    font-size: 1em; /* Lo dejé en 1em, puedes ajustar a 0.9em o el que desees */
-    color: #26ff00; /* Color verde que tienes, puedes ajustar */
+    font-size: 0.9em; /* Ajustado a 0.9em para ser más pequeño */
+    color: #888888; /* Color gris más suave */
     margin-top: 5px;
     margin-bottom: 0;
     text-align: center;
